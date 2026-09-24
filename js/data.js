@@ -20,7 +20,7 @@ const timelineData = [
         category: "aps",
         tag: "APS",
         title: "Informe Dawson: Organización de Servicios",
-        description: "Propuso una estructura basada en niveles de atención y articulación entre ellos. Antecedente clave para superar la fragmentación asistencial y reorganizar el sistema de salud según necesidades poblacionales.",
+        description: "El Informe Dawson propuso una nueva forma de organizar los servicios de salud, articulando diferentes niveles de atención y acercándose a las necesidades de la población. Aunque la Atención Primaria en Salud aún no estaba definida como estrategia, el informe fue un antecedente histórico clave para promover una atención más cercana, integrada y organizada alrededor de las necesidades de las personas.",
         icon: "assets/images/icono-02-aps.jpg",
         image: "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?w=600&auto=format&fit=crop&q=80",
         link: "https://es.scribd.com/document/248032306/Informe-Dawson-1920"
@@ -100,7 +100,7 @@ const timelineData = [
         category: "aps",
         tag: "APS",
         title: "Declaración de Alma-Ata: Nacimiento de la APS moderna",
-        description: "Conferencia de OMS/UNICEF que consagró la salud como derecho humano e impulsó la APS como estrategia clave para la meta 'Salud para Todos' con enfoque comunitario e intersectorial.",
+        description: "La Declaración de Alma-Ata marcó un momento fundamental para la salud pública al reconocer la salud como un derecho humano fundamental y posicionar la Atención Primaria en Salud como una estrategia esencial para alcanzar la meta de 'Salud para Todos'. A partir de este momento, la atención en salud empieza a comprenderse de una manera más integral: no se trata solamente de atender y tratar las enfermedades, sino también de promover la salud, prevenir la enfermedad, facilitar el acceso a los servicios y responder a las necesidades de las personas y las comunidades. La Atención Primaria en Salud impulsa una atención más cercana, accesible y equitativa, donde la participación de las personas, las familias y las comunidades se convierte en un elemento fundamental para cuidar y mejorar la salud.",
         icon: "assets/images/icono-10-aps.jpg",
         image: "https://images.unsplash.com/photo-1511174511562-5f7f18b874f8?w=600&auto=format&fit=crop&q=80",
         link: "https://www.paho.org/es/documentos/declaracion-alma-ata"
@@ -140,7 +140,7 @@ const timelineData = [
         category: "aps",
         tag: "APS",
         title: "Carta de Ottawa: Promoción de la Salud",
-        description: "Amplió el marco conceptual hacia la creación de condiciones de bienestar y empoderamiento comunitario, reforzando que la salud no depende solo del acto médico.",
+        description: "La Carta de Ottawa amplió la manera de comprender la salud al reconocer que esta no depende únicamente de los servicios médicos, sino también de las condiciones en las que las personas nacen, crecen, viven, trabajan y se desarrollan. Este enfoque fortalece la Atención Primaria en Salud, resaltando que no basta con tratar la enfermedad; también es necesario promover el bienestar, prevenir enfermedades y generar condiciones que favorezcan una mejor calidad de vida. A partir de este momento, se fortalecen la promoción de la salud, la prevención de la enfermedad y la participación activa de las personas y las comunidades en el cuidado de su salud.",
         icon: "assets/images/icono-14-aps.jpg",
         image: "https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=600&auto=format&fit=crop&q=80",
         link: "https://www.who.int/teams/health-promotion/enhanced-wellbeing/first-global-conference"
@@ -170,7 +170,7 @@ const timelineData = [
         category: "aps",
         tag: "APS",
         title: "Ley 100 en Colombia (SGSSS)",
-        description: "Reorganizó la financiación y prestación de servicios sanitarios. Aunque no asumió la APS directamente, constituye el marco de las reformas posteriores.",
+        description: "La Ley 100 de 1993 creó el Sistema General de Seguridad Social en Salud y reorganizó la forma en que se financiaban, administraban y prestaban los servicios de salud en Colombia. Aunque la Ley 100 no estableció por sí sola la Atención Primaria en Salud, representó un cambio importante en la organización del sistema y en la manera de garantizar el acceso de la población a los servicios de salud. Este proceso se convirtió en un antecedente para las transformaciones posteriores del sistema, que avanzaría hacia una atención más integral, cercana a las personas y orientada a sus necesidades.",
         icon: "assets/images/icono-17-aps.jpg",
         image: "https://images.unsplash.com/photo-1450133064473-71024230f91b?w=600&auto=format&fit=crop&q=80",
         link: "https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=5248"
@@ -220,17 +220,17 @@ const timelineData = [
         category: "aps",
         tag: "APS",
         title: "Informe OMS: La APS más necesaria que nunca",
-        description: "Revisión a 30 años de Alma-Ata para llamar a la reducción de desigualdades, impulsando sistemas equitativos e integrales centrados en las personas.",
+        description: "Treinta años después de Alma-Ata, la Organización Mundial de la Salud (OMS) publicó el Informe sobre la Salud en el Mundo 2008, dedicado a la Atención Primaria en Salud. El informe señaló que aún persistían importantes desigualdades en salud y resaltó la necesidad de avanzar hacia sistemas más equitativos, integrales y centrados en las personas. Este nuevo impulso reafirmó la importancia de los principios de Alma-Ata y destacó que la Atención Primaria en Salud debía fortalecer la equidad, la integralidad y una atención orientada a las necesidades de las personas y las comunidades. Los principios de Alma-Ata seguían vigentes, pero todavía existían grandes desafíos para alcanzar una atención sanitaria para todos.",
         icon: "assets/images/icono-22-aps.jpg",
         image: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=600&auto=format&fit=crop&q=80",
-        link: "https://iris.who.int/items/6eaf695a-b8be-47b3-8277-34296ce977d1"
+        link: "https://comunidad.semfyc.es/wp-content/uploads/11-documentos2.pdf"
     },
     {
         year: "2011",
         category: "aps",
         tag: "APS",
         title: "Ley 1438 de Colombia: Institucionalización de la APS",
-        description: "Establece la APS como estrategia de Estado articulando servicios, intersectorialidad, participación comunitaria y la creación de Equipos Básicos de Salud.",
+        description: "Con la Ley 1438 de 2011, Colombia adopta la Atención Primaria en Salud como estrategia para orientar el sistema hacia una atención integral, cercana a las personas, las familias y las comunidades. La Atención Primaria en Salud integra servicios de salud, acción intersectorial y participación comunitaria, con énfasis en la promoción de la salud, la prevención de la enfermedad y el reconocimiento de las necesidades de cada territorio. 2011 marca un punto clave: la Atención Primaria en Salud pasa de ser un referente internacional a tener un lugar explícito dentro del sistema de salud colombiano.",
         icon: "assets/images/icono-23-aps.jpg",
         image: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=600&auto=format&fit=crop&q=80",
         link: "https://consultorsalud.com/ley-1438-de-2011-reforma-al-sgsss/"
@@ -240,7 +240,7 @@ const timelineData = [
         category: "aps",
         tag: "APS",
         title: "Ley Estatutaria 1751 de Colombia",
-        description: "Consagra la salud como un derecho fundamental autónomo e irrenunciable, posicionando el autocuidado y la atención integral en el centro del sistema.",
+        description: "La Ley Estatutaria 1751 de 2015 reconoce en Colombia la salud como un derecho fundamental autónomo e irrenunciable, tanto individual como colectivo. Este reconocimiento cambia la manera de entender la salud, al establecer que no se trata solamente de recibir un servicio, sino de garantizar el derecho a una atención oportuna, eficaz y de calidad. Para la Atención Primaria en Salud, este avance reafirma la importancia de poner en el centro a las personas, las familias y las comunidades, promoviendo una atención integral y cercana a sus necesidades.",
         icon: "assets/images/icono-24-aps.jpg",
         image: "https://images.unsplash.com/photo-1450133064473-71024230f91b?w=600&auto=format&fit=crop&q=80",
         link: "https://www.cancilleria.gov.co/sites/default/files/Normograma/docs/ley_1751_2015.htm"
@@ -250,7 +250,7 @@ const timelineData = [
         category: "aps",
         tag: "APS",
         title: "PAIS, RIAS y Declaración de Astaná",
-        description: "Astaná renueva el compromiso global. Colombia formula la Política de Atención Integral (PAIS) y las Rutas Integrales de Atención (RIAS - Res 3280) para dar continuidad vital.",
+        description: "En Colombia, la Política de Atención Integral en Salud y las Rutas Integrales de Atención en Salud fortalecen la implementación de la Atención Primaria en Salud, orientando la atención hacia las personas, las familias y las comunidades, y organizando las acciones de promoción, prevención, atención y cuidado de acuerdo con las necesidades de la población. En 2018, la Declaración de Astaná reafirma a nivel mundial el compromiso con la Atención Primaria en Salud y retoma los principios de Alma-Ata, destacando la importancia de una atención integral, accesible, sostenible y centrada en las personas y las comunidades.",
         icon: "assets/images/icono-25-aps.jpg",
         image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&auto=format&fit=crop&q=80",
         link: "https://www.who.int/publications/i/item/WHO-HIS-SDS-2018.61"
@@ -270,10 +270,10 @@ const timelineData = [
         category: "aps",
         tag: "APS",
         title: "Plan Decenal PDSP y despliegue de Equipos Básicos",
-        description: "Se impulsa un modelo preventivo, predictivo y resolutivo. Masificación de Equipos Básicos Territoriales orientados al autocuidado y necesidades comunitarias.",
+        description: "El Plan Decenal de Salud Pública orienta las acciones de salud pública hacia la promoción de la salud, la prevención de la enfermedad, la equidad y el bienestar de la población. En este proceso, se fortalece el trabajo territorial mediante los Equipos Básicos de Salud, que acercan las acciones de promoción, prevención, atención y cuidado a las personas, familias y comunidades, especialmente en los territorios con mayores necesidades.",
         icon: "assets/images/icono-27-aps.jpg",
         image: "https://images.unsplash.com/photo-1584515933487-779824d29309?w=600&auto=format&fit=crop&q=80",
-        link: "https://www.minsalud.gov.co/salud/publica/Paginas/equipos-basicos-en-salud.aspx"
+        link: "https://www.minsalud.gov.co/plandecenal/Paginas/PDSP-2022-2031.aspx"
     },
     {
         year: "2025",
@@ -290,7 +290,7 @@ const timelineData = [
         category: "aps",
         tag: "APS",
         title: "Consolidación Territorial de la APS en Colombia",
-        description: "Operación de más de 10.000 Equipos Básicos de Salud en los 32 departamentos del país para acercar la medicina preventiva directamente a los hogares.",
+        description: "La Atención Primaria en Salud continúa fortaleciéndose en Colombia mediante el trabajo territorial, la participación comunitaria y el acercamiento de los servicios a las personas, las familias y las comunidades. Los Equipos Básicos de Salud desempeñan un papel importante al llevar acciones de promoción, prevención y cuidado directamente a los territorios, reconociendo sus necesidades y características. Así, la Atención Primaria en Salud avanza hacia una atención más cercana, integral y orientada a las necesidades de cada comunidad.",
         icon: "assets/images/icono-29-aps.jpg",
         image: "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=600&auto=format&fit=crop&q=80",
         link: "https://www.minsalud.gov.co/salud/publica/Paginas/equipos-basicos-en-salud.aspx"
