@@ -83,8 +83,7 @@ function createCard(item, isLeft, index) {
                         <img src="${item.image}"
                              alt="Imagen de referencia: ${escHtml(item.title)}"
                              class="event-image"
-                             loading="lazy"
-                             crossorigin="anonymous">
+                             loading="lazy">
                     </div>
                     <p class="description">${item.description}</p>
                     ${item.link ? linkBtn(item.link) : ''}

@@ -27,13 +27,11 @@ tiempo2/
 
 ## Cómo ejecutarlo
 
-Por seguridad del navegador, las imágenes locales requieren un servidor. Desde la carpeta del proyecto:
+No requiere servidor ni instalación. Solo abre el archivo **`index.html`** con doble clic
+en cualquier navegador (Chrome, Edge, Firefox).
 
-```bash
-python -m http.server 3000
-```
-
-Luego abre: <http://localhost:3000>
+> Las imágenes de los nodos están incluidas en `assets/images/`. Las fotos grandes de
+> cada hito se cargan desde internet, así que conviene tener conexión para verlas.
 
 ## Personalización
 
