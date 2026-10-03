@@ -151,17 +151,17 @@ function renderSc() {
     datesBar.innerHTML  = '';
 
     scData.forEach((item, i) => {
-        const isTop = i % 2 === 0;   // impares van arriba, pares abajo
+        const isTop = i % 2 === 0;
         const el    = createScEvent(item, i, isTop);
         (isTop ? rowTop : rowBot).appendChild(el);
 
         // Foto circular en la franja (usa la imagen del evento)
-        const slot  = document.createElement('div');
+        const slot = document.createElement('div');
         slot.className = 'sc-photo-slot';
         slot.innerHTML = `<img class="sc-photo" src="${item.image}" alt="" loading="lazy">`;
         photosBar.appendChild(slot);
 
-        // Fecha
+        // Fecha bajo la franja
         const dItem = document.createElement('div');
         dItem.className = 'sc-date-item';
         dItem.innerHTML = `<span>${esc(item.year)}</span>`;
@@ -186,26 +186,25 @@ function createScEvent(item, index, isTop) {
         el.style.setProperty('--sc-stagger', `${Math.min(index * ANIM.step, ANIM.max)}ms`);
     }
 
-    /* Estructura: icono + stem + texto
-       En la fila top: texto queda abajo del icono (imagen→stem→texto)
-       En la fila bot: texto queda arriba del icono (texto→stem→imagen) */
+    /* FILA TOP: texto arriba → ícono abajo (tocando la franja)
+       FILA BOT: ícono arriba (tocando la franja) → texto abajo */
     if (isTop) {
         el.innerHTML = `
-            <div class="sc-icon-box">
-                <img src="${item.icon || ''}" alt="" loading="lazy">
-            </div>
-            <div class="sc-stem" aria-hidden="true"></div>
             <div class="sc-label">
                 <span class="sc-title">${esc(item.title)}</span>
+            </div>
+            <div class="sc-stem" aria-hidden="true"></div>
+            <div class="sc-icon-box">
+                <img src="${item.icon || ''}" alt="" loading="lazy">
             </div>`;
     } else {
         el.innerHTML = `
-            <div class="sc-label">
-                <span class="sc-title">${esc(item.title)}</span>
-            </div>
-            <div class="sc-stem" aria-hidden="true"></div>
             <div class="sc-icon-box">
                 <img src="${item.icon || ''}" alt="" loading="lazy">
+            </div>
+            <div class="sc-stem" aria-hidden="true"></div>
+            <div class="sc-label">
+                <span class="sc-title">${esc(item.title)}</span>
             </div>`;
     }
 
