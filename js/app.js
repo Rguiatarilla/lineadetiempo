@@ -1,28 +1,58 @@
 /**
- * app.js  v4 — Dos líneas de tiempo independientes
- * Depende de: js/data.js  (apsData, scData)
+ * app.js  v5 — Dos pestañas: APS vertical + SC horizontal
+ * Depende de js/data.js  (apsData, scData)
  */
 'use strict';
 
-/* ── Configuración ───────────────────────────────────────────────── */
 const ANIM = {
-    staggerStep: 80,
-    staggerMax:  480,
-    threshold:   0.10,
-    rootMargin:  '0px 0px -40px 0px',
+    step:   80,   // ms de stagger entre tarjetas
+    max:    480,  // cap de stagger
+    thresh: 0.10,
+    margin: '0px 0px -40px 0px',
 };
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ════════════════════════════════════════════════════════════════
-   1. APS — LÍNEA VERTICAL
-   ════════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════
+   PESTAÑAS
+   ════════════════════════════════════════════════════════════ */
+function initTabs() {
+    document.querySelectorAll('.tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const target = btn.dataset.tab;
+
+            // Activar botón
+            document.querySelectorAll('.tab').forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-selected', 'false');
+            });
+            btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
+
+            // Mostrar panel
+            document.querySelectorAll('.tab-panel').forEach(p => {
+                p.classList.remove('active');
+                p.hidden = true;
+            });
+            const panel = document.getElementById(`panel-${target}`);
+            panel.hidden = false;
+            panel.classList.add('active');
+
+            // Inicializar la sección si aún no se ha hecho
+            if (target === 'aps'  && !panel.dataset.init) { renderAps();  panel.dataset.init = '1'; }
+            if (target === 'sc'   && !panel.dataset.init) { renderSc();   panel.dataset.init = '1'; }
+        });
+    });
+}
+
+/* ════════════════════════════════════════════════════════════
+   APS — LÍNEA VERTICAL
+   ════════════════════════════════════════════════════════════ */
 let apsObserver = null;
 
 function renderAps() {
     const container = document.getElementById('aps-timeline');
     if (!container) return;
     container.innerHTML = '';
-
     const frag = document.createDocumentFragment();
     apsData.forEach((item, i) => frag.appendChild(createApsCard(item, i)));
     container.appendChild(frag);
@@ -38,7 +68,7 @@ function createApsCard(item, index) {
     if (reduced) {
         card.classList.add('reveal');
     } else {
-        card.style.setProperty('--stagger', `${Math.min(index * ANIM.staggerStep, ANIM.staggerMax)}ms`);
+        card.style.setProperty('--stagger', `${Math.min(index * ANIM.step, ANIM.max)}ms`);
     }
 
     card.innerHTML = `
@@ -46,8 +76,7 @@ function createApsCard(item, index) {
             <img class="node-icon" src="${item.icon || ''}" alt="">
         </span>
         <div class="content" tabindex="0" role="button"
-             aria-expanded="false"
-             aria-label="Ver detalles: ${esc(item.title)}">
+             aria-expanded="false" aria-label="Ver detalles: ${esc(item.title)}">
             <div class="card-header">
                 <div class="header-top">
                     <span class="tag">APS</span>
@@ -69,73 +98,82 @@ function createApsCard(item, index) {
                              class="event-image" loading="lazy">
                     </div>
                     <p class="description">${item.description}</p>
-                    ${item.link ? linkBtn(item.link) : ''}
+                    ${item.link ? apslinkBtn(item.link) : ''}
                 </div>
             </div>
         </div>`;
 
-    const contentEl = card.querySelector('.content');
-    contentEl.addEventListener('click', e => {
-        if (e.target.closest('.link-btn')) return;
-        toggleApsCard(card);
-    });
-    contentEl.addEventListener('keydown', e => {
+    const ct = card.querySelector('.content');
+    ct.addEventListener('click', e => { if (!e.target.closest('.link-btn')) toggleAps(card); });
+    ct.addEventListener('keydown', e => {
         if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('.link-btn')) {
-            e.preventDefault();
-            toggleApsCard(card);
+            e.preventDefault(); toggleAps(card);
         }
     });
     return card;
 }
 
-function toggleApsCard(target) {
+function toggleAps(target) {
     const opening = !target.classList.contains('active');
     document.querySelectorAll('#aps-timeline .event-card.active').forEach(c => {
-        if (c !== target) {
-            c.classList.remove('active');
-            c.querySelector('.content').setAttribute('aria-expanded', 'false');
-        }
+        if (c !== target) { c.classList.remove('active'); c.querySelector('.content').setAttribute('aria-expanded','false'); }
     });
     target.classList.toggle('active', opening);
     target.querySelector('.content').setAttribute('aria-expanded', String(opening));
-    if (opening && !reduced) {
-        setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
-    }
+    if (opening && !reduced) setTimeout(() => target.scrollIntoView({ behavior:'smooth', block:'nearest' }), 100);
 }
 
 function setupApsObserver() {
     if (apsObserver) apsObserver.disconnect();
     if (reduced) return;
     apsObserver = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-            if (e.isIntersecting) {
-                e.target.classList.add('reveal');
-                apsObserver.unobserve(e.target);
-            }
-        });
-    }, { threshold: ANIM.threshold, rootMargin: ANIM.rootMargin });
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('reveal'); apsObserver.unobserve(e.target); } });
+    }, { threshold: ANIM.thresh, rootMargin: ANIM.margin });
     document.querySelectorAll('#aps-timeline .event-card:not(.reveal)').forEach(c => apsObserver.observe(c));
 }
 
-/* ════════════════════════════════════════════════════════════════
-   2. SALUD COLECTIVA — LÍNEA HORIZONTAL
-   ════════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════
+   SC — LÍNEA HORIZONTAL
+   ════════════════════════════════════════════════════════════ */
 let scObserver  = null;
 let activeScIdx = -1;
 
 function renderSc() {
-    const container = document.getElementById('sc-timeline');
-    if (!container) return;
-    container.innerHTML = '';
+    const rowTop    = document.getElementById('sc-row-top');
+    const rowBot    = document.getElementById('sc-row-bottom');
+    const photosBar = document.getElementById('sc-braid-photos');
+    const datesBar  = document.getElementById('sc-dates');
+    if (!rowTop || !rowBot) return;
 
-    const frag = document.createDocumentFragment();
-    scData.forEach((item, i) => frag.appendChild(createScEvent(item, i)));
-    container.appendChild(frag);
+    rowTop.innerHTML = '';
+    rowBot.innerHTML = '';
+    photosBar.innerHTML = '';
+    datesBar.innerHTML  = '';
+
+    scData.forEach((item, i) => {
+        const isTop = i % 2 === 0;   // impares van arriba, pares abajo
+        const el    = createScEvent(item, i, isTop);
+        (isTop ? rowTop : rowBot).appendChild(el);
+
+        // Foto circular en la franja (usa la imagen del evento)
+        const slot  = document.createElement('div');
+        slot.className = 'sc-photo-slot';
+        slot.innerHTML = `<img class="sc-photo" src="${item.image}" alt="" loading="lazy">`;
+        photosBar.appendChild(slot);
+
+        // Fecha
+        const dItem = document.createElement('div');
+        dItem.className = 'sc-date-item';
+        dItem.innerHTML = `<span>${esc(item.year)}</span>`;
+        datesBar.appendChild(dItem);
+    });
+
+    setupScNav();
     setupScObserver();
     setupModal();
 }
 
-function createScEvent(item, index) {
+function createScEvent(item, index, isTop) {
     const el = document.createElement('div');
     el.className = 'sc-event';
     el.setAttribute('role', 'listitem');
@@ -145,103 +183,116 @@ function createScEvent(item, index) {
     if (reduced) {
         el.classList.add('reveal');
     } else {
-        el.style.setProperty('--sc-stagger', `${Math.min(index * ANIM.staggerStep, ANIM.staggerMax)}ms`);
+        el.style.setProperty('--sc-stagger', `${Math.min(index * ANIM.step, ANIM.max)}ms`);
     }
 
-    el.innerHTML = `
-        <div class="sc-node">
-            <img src="${item.icon || ''}" alt="" loading="lazy">
-        </div>
-        <div class="sc-stem" aria-hidden="true"></div>
-        <div class="sc-label">
-            <span class="sc-year">${esc(item.year)}</span>
-            <span class="sc-title">${esc(item.title)}</span>
-        </div>`;
+    /* Estructura: icono + stem + texto
+       En la fila top: texto queda abajo del icono (imagen→stem→texto)
+       En la fila bot: texto queda arriba del icono (texto→stem→imagen) */
+    if (isTop) {
+        el.innerHTML = `
+            <div class="sc-icon-box">
+                <img src="${item.icon || ''}" alt="" loading="lazy">
+            </div>
+            <div class="sc-stem" aria-hidden="true"></div>
+            <div class="sc-label">
+                <span class="sc-title">${esc(item.title)}</span>
+            </div>`;
+    } else {
+        el.innerHTML = `
+            <div class="sc-label">
+                <span class="sc-title">${esc(item.title)}</span>
+            </div>
+            <div class="sc-stem" aria-hidden="true"></div>
+            <div class="sc-icon-box">
+                <img src="${item.icon || ''}" alt="" loading="lazy">
+            </div>`;
+    }
 
-    el.addEventListener('click',    () => openModal(index));
+    el.addEventListener('click',   () => openModal(index));
     el.addEventListener('keydown', e => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(index); }
     });
     return el;
 }
 
+/* Navegación con flechas */
+function setupScNav() {
+    const scroll   = document.getElementById('sc-scroll');
+    const btnPrev  = document.getElementById('sc-prev');
+    const btnNext  = document.getElementById('sc-next');
+    if (!scroll || !btnPrev || !btnNext) return;
+
+    const STEP = 480;
+    btnNext.addEventListener('click', () => scroll.scrollBy({ left:  STEP, behavior: 'smooth' }));
+    btnPrev.addEventListener('click', () => scroll.scrollBy({ left: -STEP, behavior: 'smooth' }));
+}
+
 function setupScObserver() {
     if (scObserver) scObserver.disconnect();
     if (reduced) return;
     scObserver = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-            if (e.isIntersecting) {
-                e.target.classList.add('reveal');
-                scObserver.unobserve(e.target);
-            }
-        });
-    }, { threshold: ANIM.threshold, rootMargin: ANIM.rootMargin });
-    document.querySelectorAll('#sc-timeline .sc-event:not(.reveal)').forEach(c => scObserver.observe(c));
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('reveal'); scObserver.unobserve(e.target); } });
+    }, { threshold: ANIM.thresh, rootMargin: ANIM.margin });
+    document.querySelectorAll('#sc-row-top .sc-event:not(.reveal), #sc-row-bottom .sc-event:not(.reveal)')
+        .forEach(c => scObserver.observe(c));
 }
 
-/* ── Modal SC ────────────────────────────────────────────────────── */
+/* ── Modal SC ────────────────────────────────────────────────── */
 function setupModal() {
-    const modal    = document.getElementById('sc-modal');
-    const backdrop = modal.querySelector('.sc-modal__backdrop');
-    const closeBtn = modal.querySelector('.sc-modal__close');
-
-    backdrop.addEventListener('click', closeModal);
-    closeBtn.addEventListener('click',  closeModal);
+    document.getElementById('sc-modal-backdrop')?.addEventListener('click', closeModal);
+    document.getElementById('sc-modal-close')?.addEventListener('click',    closeModal);
     document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && !modal.hidden) closeModal();
+        if (e.key === 'Escape' && !document.getElementById('sc-modal')?.hidden) closeModal();
     });
 }
 
 function openModal(index) {
     const item  = scData[index];
     const modal = document.getElementById('sc-modal');
+    if (!modal) return;
 
-    document.getElementById('sc-modal-img').src = item.image || '';
-    document.getElementById('sc-modal-img').alt = `Imagen: ${item.title}`;
-    document.getElementById('sc-modal-year').textContent  = item.year;
-    document.getElementById('sc-modal-title').textContent = item.title;
-    document.getElementById('sc-modal-desc').textContent  = item.description;
+    document.getElementById('sc-modal-img').src              = item.image || '';
+    document.getElementById('sc-modal-img').alt              = `Imagen: ${item.title}`;
+    document.getElementById('sc-modal-year').textContent     = item.year;
+    document.getElementById('sc-modal-title').textContent    = item.title;
+    document.getElementById('sc-modal-desc').textContent     = item.description;
 
     const linkEl = document.getElementById('sc-modal-link');
-    if (item.link) {
-        linkEl.href  = item.link;
-        linkEl.hidden = false;
-    } else {
-        linkEl.hidden = true;
-    }
+    if (item.link) { linkEl.href = item.link; linkEl.hidden = false; }
+    else           { linkEl.hidden = true; }
 
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
-    modal.querySelector('.sc-modal__close').focus();
+    document.getElementById('sc-modal-close')?.focus();
     activeScIdx = index;
 }
 
 function closeModal() {
     const modal = document.getElementById('sc-modal');
+    if (!modal) return;
     modal.hidden = true;
     document.body.style.overflow = '';
-    // Devolver foco al evento que abrió el modal
     if (activeScIdx >= 0) {
-        const events = document.querySelectorAll('#sc-timeline .sc-event');
-        if (events[activeScIdx]) events[activeScIdx].focus();
+        const all = document.querySelectorAll('#sc-row-top .sc-event, #sc-row-bottom .sc-event');
+        if (all[activeScIdx]) all[activeScIdx].focus();
     }
     activeScIdx = -1;
 }
 
-/* ── Helpers ─────────────────────────────────────────────────────── */
+/* ── Helpers ─────────────────────────────────────────────────── */
 function esc(str) {
     return String(str)
         .replace(/&/g,'&amp;').replace(/</g,'&lt;')
         .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
-function linkBtn(href) {
+function apslinkBtn(href) {
     return `
         <a href="${href}" target="_blank" rel="noopener noreferrer" class="link-btn">
             Más información
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="2.5"
-                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                 stroke-linecap="round" aria-hidden="true">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                 <polyline points="15 3 21 3 21 9"></polyline>
                 <line x1="10" y1="14" x2="21" y2="3"></line>
@@ -249,8 +300,10 @@ function linkBtn(href) {
         </a>`;
 }
 
-/* ── Inicio ──────────────────────────────────────────────────────── */
+/* ── Inicio ──────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
+    initTabs();
+    // Renderizar la pestaña activa por defecto (APS)
     renderAps();
-    renderSc();
+    document.getElementById('panel-aps').dataset.init = '1';
 });
