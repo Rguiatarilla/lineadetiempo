@@ -152,16 +152,17 @@ function renderSc() {
 
     scData.forEach((item, i) => {
         const isTop = i % 2 === 0;
-        const el    = createScEvent(item, i, isTop);
+        const num   = i + 1;                          // número del evento (1…19)
+        const el    = createScEvent(item, i, isTop, num);
         (isTop ? rowTop : rowBot).appendChild(el);
 
-        // Foto circular en la franja (usa la imagen del evento)
+        // Foto circular en la franja
         const slot = document.createElement('div');
         slot.className = 'sc-photo-slot';
         slot.innerHTML = `<img class="sc-photo" src="${item.image}" alt="" loading="lazy">`;
         photosBar.appendChild(slot);
 
-        // Fecha bajo la franja
+        // Fecha
         const dItem = document.createElement('div');
         dItem.className = 'sc-date-item';
         dItem.innerHTML = `<span>${esc(item.year)}</span>`;
@@ -173,7 +174,7 @@ function renderSc() {
     setupModal();
 }
 
-function createScEvent(item, index, isTop) {
+function createScEvent(item, index, isTop, num) {
     const el = document.createElement('div');
     el.className = 'sc-event';
     el.setAttribute('role', 'listitem');
@@ -186,26 +187,31 @@ function createScEvent(item, index, isTop) {
         el.style.setProperty('--sc-stagger', `${Math.min(index * ANIM.step, ANIM.max)}ms`);
     }
 
-    /* FILA TOP: texto arriba → ícono abajo (tocando la franja)
-       FILA BOT: ícono arriba (tocando la franja) → texto abajo */
+    /* Caja del ícono:
+       - Fondo azul degradado
+       - Si hay imagen JPG local (item.icon), se muestra encima tapando el número
+       - Si no hay imagen, se muestra el número grande y blanco
+       Esto replica exactamente la imagen de referencia:
+       algunos eventos muestran imagen, otros muestran número */
+    const iconHtml = `
+        <div class="sc-icon-box">
+            <span class="sc-num">${num}</span>
+            ${item.icon ? `<img src="${item.icon}" alt="" loading="lazy">` : ''}
+        </div>`;
+
+    const labelHtml = `
+        <div class="sc-label">
+            <span class="sc-title">${esc(item.title)}</span>
+        </div>`;
+
+    const stemHtml = `<div class="sc-stem" aria-hidden="true"></div>`;
+
+    /* FILA TOP: texto arriba → stem → ícono abajo (pegado a la franja)
+       FILA BOT: ícono arriba (pegado a la franja) → stem → texto abajo */
     if (isTop) {
-        el.innerHTML = `
-            <div class="sc-label">
-                <span class="sc-title">${esc(item.title)}</span>
-            </div>
-            <div class="sc-stem" aria-hidden="true"></div>
-            <div class="sc-icon-box">
-                <img src="${item.icon || ''}" alt="" loading="lazy">
-            </div>`;
+        el.innerHTML = labelHtml + stemHtml + iconHtml;
     } else {
-        el.innerHTML = `
-            <div class="sc-icon-box">
-                <img src="${item.icon || ''}" alt="" loading="lazy">
-            </div>
-            <div class="sc-stem" aria-hidden="true"></div>
-            <div class="sc-label">
-                <span class="sc-title">${esc(item.title)}</span>
-            </div>`;
+        el.innerHTML = iconHtml + stemHtml + labelHtml;
     }
 
     el.addEventListener('click',   () => openModal(index));
