@@ -1,72 +1,60 @@
 /**
- * app.js — Línea del Tiempo: APS y Salud Colectiva  v3
- * Depende de: js/data.js (timelineData)
+ * app.js  v4 — Dos líneas de tiempo independientes
+ * Depende de: js/data.js  (apsData, scData)
  */
-
 'use strict';
 
-// ── Configuración ─────────────────────────────────────────────────────────────
+/* ── Configuración ───────────────────────────────────────────────── */
 const ANIM = {
-    staggerStep: 90,     // ms entre cada tarjeta al revelarse
-    staggerMax:  500,    // cap máximo de delay
-    threshold:   0.10,   // % de la tarjeta visible para disparar reveal
-    rootMargin:  '0px 0px -50px 0px',
+    staggerStep: 80,
+    staggerMax:  480,
+    threshold:   0.10,
+    rootMargin:  '0px 0px -40px 0px',
 };
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* ════════════════════════════════════════════════════════════════
+   1. APS — LÍNEA VERTICAL
+   ════════════════════════════════════════════════════════════════ */
+let apsObserver = null;
 
-let scrollObserver = null;
-
-// ── Render del timeline ───────────────────────────────────────────────────────
-function renderTimeline(filter = 'all') {
-    const container = document.getElementById('timeline');
+function renderAps() {
+    const container = document.getElementById('aps-timeline');
+    if (!container) return;
     container.innerHTML = '';
 
-    const data = filter === 'all'
-        ? timelineData
-        : timelineData.filter(d => d.category === filter);
-
     const frag = document.createDocumentFragment();
-    data.forEach((item, i) => frag.appendChild(createCard(item, i % 2 === 0, i)));
+    apsData.forEach((item, i) => frag.appendChild(createApsCard(item, i)));
     container.appendChild(frag);
-
-    setupScrollObserver();
+    setupApsObserver();
 }
 
-// ── Crear tarjeta ─────────────────────────────────────────────────────────────
-function createCard(item, isLeft, index) {
-    const card = document.createElement('div');
+function createApsCard(item, index) {
+    const isLeft = index % 2 === 0;
+    const card   = document.createElement('div');
     card.className = `event-card ${isLeft ? 'left' : 'right'}`;
-    card.setAttribute('data-category', item.category);
     card.setAttribute('role', 'listitem');
 
-    if (prefersReducedMotion) {
-        // Sin animaciones: mostrar directo
+    if (reduced) {
         card.classList.add('reveal');
     } else {
-        // Stagger: cada tarjeta aparece un poco después
-        const delay = Math.min(index * ANIM.staggerStep, ANIM.staggerMax);
-        card.style.setProperty('--stagger', `${delay}ms`);
+        card.style.setProperty('--stagger', `${Math.min(index * ANIM.staggerStep, ANIM.staggerMax)}ms`);
     }
 
     card.innerHTML = `
         <span class="timeline-node" aria-hidden="true">
-            ${nodeIcon(item.category, item)}
+            <img class="node-icon" src="${item.icon || ''}" alt="">
         </span>
-
-        <div class="content"
-             tabindex="0"
-             role="button"
+        <div class="content" tabindex="0" role="button"
              aria-expanded="false"
-             aria-label="Ver detalles: ${escHtml(item.title)}">
-
+             aria-label="Ver detalles: ${esc(item.title)}">
             <div class="card-header">
                 <div class="header-top">
-                    <span class="tag">${escHtml(item.tag)}</span>
-                    <span class="date">${escHtml(item.year)}</span>
+                    <span class="tag">APS</span>
+                    <span class="date">${esc(item.year)}</span>
                 </div>
                 <div class="title">
-                    <span>${escHtml(item.title)}</span>
+                    <span>${esc(item.title)}</span>
                     <svg class="arrow-icon" viewBox="0 0 24 24" fill="none"
                          stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
                          aria-hidden="true">
@@ -74,16 +62,11 @@ function createCard(item, isLeft, index) {
                     </svg>
                 </div>
             </div>
-
-            <div class="card-body"
-                 role="region"
-                 aria-label="Detalles: ${escHtml(item.title)}">
+            <div class="card-body" role="region" aria-label="Detalles: ${esc(item.title)}">
                 <div class="card-body-inner">
                     <div class="event-image-wrap">
-                        <img src="${item.image}"
-                             alt="Imagen de referencia: ${escHtml(item.title)}"
-                             class="event-image"
-                             loading="lazy">
+                        <img src="${item.image}" alt="Imagen: ${esc(item.title)}"
+                             class="event-image" loading="lazy">
                     </div>
                     <p class="description">${item.description}</p>
                     ${item.link ? linkBtn(item.link) : ''}
@@ -91,58 +74,165 @@ function createCard(item, isLeft, index) {
             </div>
         </div>`;
 
-    // Eventos de interacción
     const contentEl = card.querySelector('.content');
-
-    contentEl.addEventListener('click', (e) => {
+    contentEl.addEventListener('click', e => {
         if (e.target.closest('.link-btn')) return;
-        toggleCard(card);
+        toggleApsCard(card);
     });
-
-    contentEl.addEventListener('keydown', (e) => {
+    contentEl.addEventListener('keydown', e => {
         if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('.link-btn')) {
             e.preventDefault();
-            toggleCard(card);
+            toggleApsCard(card);
         }
     });
-
     return card;
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-function escHtml(str) {
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+function toggleApsCard(target) {
+    const opening = !target.classList.contains('active');
+    document.querySelectorAll('#aps-timeline .event-card.active').forEach(c => {
+        if (c !== target) {
+            c.classList.remove('active');
+            c.querySelector('.content').setAttribute('aria-expanded', 'false');
+        }
+    });
+    target.classList.toggle('active', opening);
+    target.querySelector('.content').setAttribute('aria-expanded', String(opening));
+    if (opening && !reduced) {
+        setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+    }
 }
 
-/**
- * Devuelve el ícono SVG del nodo según la categoría.
- *  - aps: estetoscopio (Atención Primaria en Salud)
- *  - sc:  comunidad de personas (Salud Colectiva)
- * Iconos rellenos estilo emblema/infografía.
- * @param {string} category - 'aps' | 'sc'
- * @returns {string} markup SVG
- */
-/* ═══════════════════════════════════════════════════════════════════
-   IMÁGENES DE LOS ICONOS (JPG de 70×70 px que envía la empresa)
-   ───────────────────────────────────────────────────────────────────
-   1) Guarda las imágenes en la carpeta:  assets/images/
-   2) Cambia aquí abajo el nombre del archivo por el que te pasen.
-   3) Si un evento necesita un ícono distinto, agrégale  icon: "..."
-      en su objeto dentro de js/data.js y ese tendrá prioridad.
-   ═══════════════════════════════════════════════════════════════════ */
-/* Cada evento define su propia imagen en el campo  icon:  dentro de
-   js/data.js  (ej: "assets/images/icono-01-sc.jpg").
-   Son 29 imágenes JPG de 70×70 px, una por hito.
-   Para cambiarlas: reemplaza el archivo JPG en assets/images/
-   manteniendo el mismo nombre, o cambia la ruta en data.js. */
-function nodeIcon(category, item) {
-    const src = (item && item.icon) ? item.icon : '';
-    // Sin crossorigin: son imágenes locales (se bloquearían con file://)
-    return `<img class="node-icon" src="${src}" alt="">`;
+function setupApsObserver() {
+    if (apsObserver) apsObserver.disconnect();
+    if (reduced) return;
+    apsObserver = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('reveal');
+                apsObserver.unobserve(e.target);
+            }
+        });
+    }, { threshold: ANIM.threshold, rootMargin: ANIM.rootMargin });
+    document.querySelectorAll('#aps-timeline .event-card:not(.reveal)').forEach(c => apsObserver.observe(c));
+}
+
+/* ════════════════════════════════════════════════════════════════
+   2. SALUD COLECTIVA — LÍNEA HORIZONTAL
+   ════════════════════════════════════════════════════════════════ */
+let scObserver  = null;
+let activeScIdx = -1;
+
+function renderSc() {
+    const container = document.getElementById('sc-timeline');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const frag = document.createDocumentFragment();
+    scData.forEach((item, i) => frag.appendChild(createScEvent(item, i)));
+    container.appendChild(frag);
+    setupScObserver();
+    setupModal();
+}
+
+function createScEvent(item, index) {
+    const el = document.createElement('div');
+    el.className = 'sc-event';
+    el.setAttribute('role', 'listitem');
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('aria-label', `${item.year}: ${item.title}`);
+
+    if (reduced) {
+        el.classList.add('reveal');
+    } else {
+        el.style.setProperty('--sc-stagger', `${Math.min(index * ANIM.staggerStep, ANIM.staggerMax)}ms`);
+    }
+
+    el.innerHTML = `
+        <div class="sc-node">
+            <img src="${item.icon || ''}" alt="" loading="lazy">
+        </div>
+        <div class="sc-stem" aria-hidden="true"></div>
+        <div class="sc-label">
+            <span class="sc-year">${esc(item.year)}</span>
+            <span class="sc-title">${esc(item.title)}</span>
+        </div>`;
+
+    el.addEventListener('click',    () => openModal(index));
+    el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(index); }
+    });
+    return el;
+}
+
+function setupScObserver() {
+    if (scObserver) scObserver.disconnect();
+    if (reduced) return;
+    scObserver = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('reveal');
+                scObserver.unobserve(e.target);
+            }
+        });
+    }, { threshold: ANIM.threshold, rootMargin: ANIM.rootMargin });
+    document.querySelectorAll('#sc-timeline .sc-event:not(.reveal)').forEach(c => scObserver.observe(c));
+}
+
+/* ── Modal SC ────────────────────────────────────────────────────── */
+function setupModal() {
+    const modal    = document.getElementById('sc-modal');
+    const backdrop = modal.querySelector('.sc-modal__backdrop');
+    const closeBtn = modal.querySelector('.sc-modal__close');
+
+    backdrop.addEventListener('click', closeModal);
+    closeBtn.addEventListener('click',  closeModal);
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && !modal.hidden) closeModal();
+    });
+}
+
+function openModal(index) {
+    const item  = scData[index];
+    const modal = document.getElementById('sc-modal');
+
+    document.getElementById('sc-modal-img').src = item.image || '';
+    document.getElementById('sc-modal-img').alt = `Imagen: ${item.title}`;
+    document.getElementById('sc-modal-year').textContent  = item.year;
+    document.getElementById('sc-modal-title').textContent = item.title;
+    document.getElementById('sc-modal-desc').textContent  = item.description;
+
+    const linkEl = document.getElementById('sc-modal-link');
+    if (item.link) {
+        linkEl.href  = item.link;
+        linkEl.hidden = false;
+    } else {
+        linkEl.hidden = true;
+    }
+
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    modal.querySelector('.sc-modal__close').focus();
+    activeScIdx = index;
+}
+
+function closeModal() {
+    const modal = document.getElementById('sc-modal');
+    modal.hidden = true;
+    document.body.style.overflow = '';
+    // Devolver foco al evento que abrió el modal
+    if (activeScIdx >= 0) {
+        const events = document.querySelectorAll('#sc-timeline .sc-event');
+        if (events[activeScIdx]) events[activeScIdx].focus();
+    }
+    activeScIdx = -1;
+}
+
+/* ── Helpers ─────────────────────────────────────────────────────── */
+function esc(str) {
+    return String(str)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function linkBtn(href) {
@@ -159,59 +249,8 @@ function linkBtn(href) {
         </a>`;
 }
 
-// ── Toggle acordeón ───────────────────────────────────────────────────────────
-function toggleCard(target) {
-    const opening = !target.classList.contains('active');
-
-    // Cerrar la que esté abierta
-    document.querySelectorAll('.event-card.active').forEach(c => {
-        if (c !== target) {
-            c.classList.remove('active');
-            c.querySelector('.content').setAttribute('aria-expanded', 'false');
-        }
-    });
-
-    target.classList.toggle('active', opening);
-    target.querySelector('.content').setAttribute('aria-expanded', String(opening));
-
-    // Scroll suave al abrir para que la tarjeta quede visible
-    if (opening && !prefersReducedMotion) {
-        setTimeout(() => {
-            target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 100);
-    }
-}
-
-// ── IntersectionObserver ──────────────────────────────────────────────────────
-function setupScrollObserver() {
-    if (scrollObserver) scrollObserver.disconnect();
-    if (prefersReducedMotion) return;
-
-    scrollObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('reveal');
-                scrollObserver.unobserve(entry.target); // desconectar tras revelar
-            }
-        });
-    }, {
-        threshold:  ANIM.threshold,
-        rootMargin: ANIM.rootMargin,
-    });
-
-    document.querySelectorAll('.event-card:not(.reveal)').forEach(c => {
-        scrollObserver.observe(c);
-    });
-}
-
-// ── Filtros ───────────────────────────────────────────────────────────────────
-document.querySelectorAll('.btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderTimeline(btn.getAttribute('data-filter'));
-    });
+/* ── Inicio ──────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+    renderAps();
+    renderSc();
 });
-
-// ── Inicio ────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => renderTimeline());

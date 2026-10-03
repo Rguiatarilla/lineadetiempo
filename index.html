@@ -6,64 +6,130 @@
     <title>Línea del Tiempo: APS y Salud Colectiva</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-    <!-- Partículas decorativas de fondo -->
+    <!-- Orbs decorativos de fondo -->
     <div class="bg-orb bg-orb--1" aria-hidden="true"></div>
     <div class="bg-orb bg-orb--2" aria-hidden="true"></div>
     <div class="bg-orb bg-orb--3" aria-hidden="true"></div>
 
-    <div class="container">
+    <div class="page-wrapper">
 
-        <!-- ── Hero / Header ─────────────────────────────────── -->
-        <header class="hero">
-            <div class="hero__eyebrow">
-                <span class="hero__pill hero__pill--aps">APS</span>
-                <span class="hero__separator" aria-hidden="true">·</span>
-                <span class="hero__pill hero__pill--sc">Salud Colectiva</span>
+        <!-- ══════════════════════════════════════════
+             SECCIÓN 1 — ATENCIÓN PRIMARIA EN SALUD
+             Diseño: línea vertical (diseño premium)
+        ════════════════════════════════════════════ -->
+        <section class="section-aps" id="aps" aria-label="Atención Primaria en Salud">
+
+            <header class="hero hero--aps">
+                <div class="hero__eyebrow">
+                    <span class="hero__pill hero__pill--aps">APS</span>
+                    <span class="hero__separator" aria-hidden="true">·</span>
+                    <span class="hero__pill-label">Atención Primaria en Salud</span>
+                </div>
+                <h1 class="hero__title">
+                    Hitos Históricos<br><em>de la APS</em>
+                </h1>
+                <p class="hero__subtitle">
+                    Evolución de la Atención Primaria en Salud en América Latina y Colombia
+                </p>
+                <div class="hero__divider" aria-hidden="true">
+                    <span class="hero__divider-dot hero__divider-dot--aps"></span>
+                    <span class="hero__divider-line hero__divider-line--aps"></span>
+                    <span class="hero__divider-dot hero__divider-dot--aps"></span>
+                </div>
+            </header>
+
+            <main>
+                <div class="timeline timeline--vertical" id="aps-timeline" role="list"
+                     aria-label="Línea del tiempo APS"></div>
+            </main>
+
+        </section>
+
+        <!-- ══════════════════════════════════════════
+             SECCIÓN 2 — SALUD COLECTIVA
+             Diseño: línea horizontal tipo infografía
+        ════════════════════════════════════════════ -->
+        <section class="section-sc" id="sc" aria-label="Salud Colectiva">
+
+            <header class="hero hero--sc">
+                <div class="hero__eyebrow">
+                    <span class="hero__pill hero__pill--sc">Salud Colectiva</span>
+                    <span class="hero__separator" aria-hidden="true">·</span>
+                    <span class="hero__pill-label">Medicina Social Latinoamericana</span>
+                </div>
+                <h2 class="hero__title hero__title--sc">
+                    Hitos Históricos<br><em>de la Salud Colectiva</em>
+                </h2>
+                <p class="hero__subtitle">
+                    Desarrollo de la Medicina Social y la Salud Colectiva en América Latina y Colombia
+                </p>
+                <div class="hero__divider" aria-hidden="true">
+                    <span class="hero__divider-dot hero__divider-dot--sc"></span>
+                    <span class="hero__divider-line hero__divider-line--sc"></span>
+                    <span class="hero__divider-dot hero__divider-dot--sc"></span>
+                </div>
+            </header>
+
+            <!-- Línea horizontal SC -->
+            <div class="sc-timeline-wrapper">
+                <div class="sc-track-container">
+                    <!-- La franja ondulada / trenza -->
+                    <div class="sc-braid" aria-hidden="true">
+                        <div class="sc-braid__stripe sc-braid__stripe--1"></div>
+                        <div class="sc-braid__stripe sc-braid__stripe--2"></div>
+                        <div class="sc-braid__stripe sc-braid__stripe--3"></div>
+                        <div class="sc-braid__stripe sc-braid__stripe--4"></div>
+                    </div>
+                    <!-- Eventos generados por JS -->
+                    <div class="sc-events" id="sc-timeline" role="list"
+                         aria-label="Línea del tiempo Salud Colectiva"></div>
+                </div>
             </div>
-            <h1 class="hero__title">Hitos Históricos<br><em>de la Salud</em></h1>
-            <p class="hero__subtitle">
-                Evolución de la Atención Primaria en Salud (APS) y la Salud Colectiva
-                en América Latina y Colombia
-            </p>
-            <!-- Decoración línea divisoria -->
-            <div class="hero__divider" aria-hidden="true">
-                <span class="hero__divider-dot hero__divider-dot--aps"></span>
-                <span class="hero__divider-line"></span>
-                <span class="hero__divider-dot hero__divider-dot--sc"></span>
+
+            <!-- Modal de detalle SC -->
+            <div class="sc-modal" id="sc-modal" role="dialog" aria-modal="true"
+                 aria-labelledby="sc-modal-title" hidden>
+                <div class="sc-modal__backdrop"></div>
+                <div class="sc-modal__panel">
+                    <button class="sc-modal__close" aria-label="Cerrar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                    <div class="sc-modal__img-wrap">
+                        <img id="sc-modal-img" src="" alt="" class="sc-modal__img">
+                    </div>
+                    <div class="sc-modal__body">
+                        <span class="sc-modal__year" id="sc-modal-year"></span>
+                        <h3 class="sc-modal__title" id="sc-modal-title"></h3>
+                        <p class="sc-modal__desc" id="sc-modal-desc"></p>
+                        <a class="sc-modal__link" id="sc-modal-link"
+                           target="_blank" rel="noopener noreferrer" hidden>
+                            Más información
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2.5"
+                                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <line x1="10" y1="14" x2="21" y2="3"></line>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
             </div>
-        </header>
 
-        <!-- ── Filtros ────────────────────────────────────────── -->
-        <nav class="controls" aria-label="Filtrar eventos por categoría">
-            <button class="btn active" data-filter="all">
-                <span class="btn__dot" aria-hidden="true"></span>
-                Ver Todos
-            </button>
-            <button class="btn" data-filter="aps">
-                <span class="btn__dot btn__dot--aps" aria-hidden="true"></span>
-                Atención Primaria en Salud (APS)
-            </button>
-            <button class="btn" data-filter="sc">
-                <span class="btn__dot btn__dot--sc" aria-hidden="true"></span>
-                Salud Colectiva / Medicina Social
-            </button>
-        </nav>
+        </section>
 
-        <!-- ── Timeline ──────────────────────────────────────── -->
-        <main>
-            <div class="timeline" id="timeline" role="list" aria-label="Línea del tiempo de hitos históricos"></div>
-        </main>
+    </div><!-- /page-wrapper -->
 
-    </div><!-- /container -->
-
-    <!-- Datos del timeline -->
     <script src="js/data.js"></script>
-    <!-- Lógica de la aplicación -->
     <script src="js/app.js"></script>
 </body>
 </html>
