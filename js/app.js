@@ -1,15 +1,12 @@
 /**
- * app.js  v5 — Dos pestañas: APS vertical + SC horizontal
- * Depende de js/data.js  (apsData, scData)
+ * app.js  v6
+ * APS  → infografía horizontal tipo "Un viaje por la historia"
+ * SC   → línea horizontal con franja multicolor (sin números)
+ * Depende de js/data.js (apsData, scData)
  */
 'use strict';
 
-const ANIM = {
-    step:   80,   // ms de stagger entre tarjetas
-    max:    480,  // cap de stagger
-    thresh: 0.10,
-    margin: '0px 0px -40px 0px',
-};
+const ANIM = { step:80, max:480, thresh:0.10, margin:'0px 0px -40px 0px' };
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ════════════════════════════════════════════════════════════
@@ -20,7 +17,6 @@ function initTabs() {
         btn.addEventListener('click', () => {
             const target = btn.dataset.tab;
 
-            // Activar botón
             document.querySelectorAll('.tab').forEach(b => {
                 b.classList.remove('active');
                 b.setAttribute('aria-selected', 'false');
@@ -28,7 +24,6 @@ function initTabs() {
             btn.classList.add('active');
             btn.setAttribute('aria-selected', 'true');
 
-            // Mostrar panel
             document.querySelectorAll('.tab-panel').forEach(p => {
                 p.classList.remove('active');
                 p.hidden = true;
@@ -37,103 +32,183 @@ function initTabs() {
             panel.hidden = false;
             panel.classList.add('active');
 
-            // Inicializar la sección si aún no se ha hecho
-            if (target === 'aps'  && !panel.dataset.init) { renderAps();  panel.dataset.init = '1'; }
-            if (target === 'sc'   && !panel.dataset.init) { renderSc();   panel.dataset.init = '1'; }
+            if (target === 'aps' && !panel.dataset.init) { renderAps(); panel.dataset.init = '1'; }
+            if (target === 'sc'  && !panel.dataset.init) { renderSc();  panel.dataset.init = '1'; }
         });
     });
 }
 
 /* ════════════════════════════════════════════════════════════
-   APS — LÍNEA VERTICAL
+   APS — INFOGRAFÍA HORIZONTAL (Un viaje por la historia)
    ════════════════════════════════════════════════════════════ */
-let apsObserver = null;
+let apsModalIdx = -1;
 
 function renderAps() {
-    const container = document.getElementById('aps-timeline');
-    if (!container) return;
-    container.innerHTML = '';
-    const frag = document.createDocumentFragment();
-    apsData.forEach((item, i) => frag.appendChild(createApsCard(item, i)));
-    container.appendChild(frag);
-    setupApsObserver();
-}
+    const labelsTop = document.getElementById('aps-labels-top');
+    const nodes     = document.getElementById('aps-nodes');
+    const labelsBot = document.getElementById('aps-labels-bottom');
+    if (!labelsTop || !nodes || !labelsBot) return;
 
-function createApsCard(item, index) {
-    const isLeft = index % 2 === 0;
-    const card   = document.createElement('div');
-    card.className = `event-card ${isLeft ? 'left' : 'right'}`;
-    card.setAttribute('role', 'listitem');
+    labelsTop.innerHTML = '';
+    nodes.innerHTML     = '';
+    labelsBot.innerHTML = '';
 
-    if (reduced) {
-        card.classList.add('reveal');
-    } else {
-        card.style.setProperty('--stagger', `${Math.min(index * ANIM.step, ANIM.max)}ms`);
-    }
-
-    card.innerHTML = `
-        <span class="timeline-node" aria-hidden="true">
-            <img class="node-icon" src="${item.icon || ''}" alt="">
-        </span>
-        <div class="content" tabindex="0" role="button"
-             aria-expanded="false" aria-label="Ver detalles: ${esc(item.title)}">
-            <div class="card-header">
-                <div class="header-top">
-                    <span class="tag">APS</span>
-                    <span class="date">${esc(item.year)}</span>
-                </div>
-                <div class="title">
-                    <span>${esc(item.title)}</span>
-                    <svg class="arrow-icon" viewBox="0 0 24 24" fill="none"
-                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
-                         aria-hidden="true">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-                </div>
-            </div>
-            <div class="card-body" role="region" aria-label="Detalles: ${esc(item.title)}">
-                <div class="card-body-inner">
-                    <div class="event-image-wrap">
-                        <img src="${item.image}" alt="Imagen: ${esc(item.title)}"
-                             class="event-image" loading="lazy">
-                    </div>
-                    <p class="description">${item.description}</p>
-                    ${item.link ? apslinkBtn(item.link) : ''}
-                </div>
-            </div>
-        </div>`;
-
-    const ct = card.querySelector('.content');
-    ct.addEventListener('click', e => { if (!e.target.closest('.link-btn')) toggleAps(card); });
-    ct.addEventListener('keydown', e => {
-        if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('.link-btn')) {
-            e.preventDefault(); toggleAps(card);
+    apsData.forEach((item, i) => {
+        /* ── Etiqueta SUPERIOR (etapa tag + título + desc corta) ── */
+        const top = document.createElement('div');
+        top.className = 'aps-label-top';
+        // Solo pares arriba (0,2,4…), impares quedan vacíos arriba
+        if (i % 2 === 0) {
+            top.innerHTML = `
+                <span class="aps-etapa-tag">Etapa ${item.etapa}</span>
+                <span class="aps-label-title">${esc(item.title)}</span>
+                <span class="aps-label-desc">${esc(item.subtitle)}</span>`;
         }
+        labelsTop.appendChild(top);
+
+        /* ── Nodo circular ── */
+        const node = document.createElement('div');
+        node.className = 'aps-node';
+        node.setAttribute('role', 'listitem');
+        node.innerHTML = `
+            <button class="aps-node__circle"
+                    aria-label="Etapa ${item.etapa}: ${item.title}. Haz clic para ver más."
+                    data-idx="${i}">
+                ${item.icon
+                    ? `<img src="${item.icon}" alt="" loading="lazy">`
+                    : `<span style="font-size:.7rem;font-weight:800;color:#c0392b">${item.year}</span>`}
+            </button>`;
+        node.querySelector('.aps-node__circle').addEventListener('click', () => openApsModal(i));
+        nodes.appendChild(node);
+
+        /* ── Etiqueta INFERIOR (año + subtítulo + "Conocer más") ── */
+        const bot = document.createElement('div');
+        bot.className = 'aps-label-bottom';
+        if (i % 2 !== 0) {
+            // Impares van abajo
+            bot.innerHTML = `
+                <span class="aps-etapa-tag" style="font-size:.55rem">Etapa ${item.etapa}</span>
+                <span class="aps-year-badge">${esc(item.year)}</span>
+                <span class="aps-label-subtitle">${esc(item.subtitle)}</span>
+                <button class="aps-know-more" data-idx="${i}">Conocer más →</button>`;
+        } else {
+            bot.innerHTML = `
+                <span class="aps-year-badge">${esc(item.year)}</span>
+                <button class="aps-know-more" data-idx="${i}">Conocer más →</button>`;
+        }
+        bot.querySelectorAll('.aps-know-more').forEach(b => {
+            b.addEventListener('click', () => openApsModal(parseInt(b.dataset.idx)));
+        });
+        labelsBot.appendChild(bot);
     });
-    return card;
+
+    /* Valores en el pie */
+    renderApsValores();
+    setupApsNav();
+    setupApsModal();
 }
 
-function toggleAps(target) {
-    const opening = !target.classList.contains('active');
-    document.querySelectorAll('#aps-timeline .event-card.active').forEach(c => {
-        if (c !== target) { c.classList.remove('active'); c.querySelector('.content').setAttribute('aria-expanded','false'); }
-    });
-    target.classList.toggle('active', opening);
-    target.querySelector('.content').setAttribute('aria-expanded', String(opening));
-    if (opening && !reduced) setTimeout(() => target.scrollIntoView({ behavior:'smooth', block:'nearest' }), 100);
+function renderApsValores() {
+    // Añade barra de valores si no existe
+    if (document.getElementById('aps-valores')) return;
+    const wrap = document.getElementById('aps-scroll')?.closest('.aps-wrapper');
+    if (!wrap) return;
+    const bar = document.createElement('div');
+    bar.className = 'aps-valores';
+    bar.id = 'aps-valores';
+    bar.innerHTML = `
+        <div class="aps-valor">
+            <span class="aps-valor__icon">⚖️</span>
+            <span class="aps-valor__name">Equidad</span>
+            <span class="aps-valor__desc">Para que todas las personas tengan las mismas oportunidades.</span>
+        </div>
+        <div class="aps-valor">
+            <span class="aps-valor__icon">🤝</span>
+            <span class="aps-valor__name">Participación</span>
+            <span class="aps-valor__desc">Porque la comunidad hace parte de las decisiones.</span>
+        </div>
+        <div class="aps-valor">
+            <span class="aps-valor__icon">🌐</span>
+            <span class="aps-valor__name">Intersectorialidad</span>
+            <span class="aps-valor__desc">Trabajando juntos por el bienestar de todas las personas.</span>
+        </div>
+        <div class="aps-valor">
+            <span class="aps-valor__icon">💚</span>
+            <span class="aps-valor__name">Integralidad</span>
+            <span class="aps-valor__desc">Atendiendo a la persona de manera completa en cada etapa de su vida.</span>
+        </div>
+        <div class="aps-valor">
+            <span class="aps-valor__icon">📍</span>
+            <span class="aps-valor__name">Territorio</span>
+            <span class="aps-valor__desc">Soluciones pensadas desde y para cada comunidad.</span>
+        </div>
+        <div class="aps-valor" style="flex:2;min-width:200px">
+            <span class="aps-valor__icon">✨</span>
+            <span class="aps-valor__name" style="font-size:.7rem;line-height:1.4">
+                Cada paso cuenta,<br>cada historia transforma,<br>cada persona importa.
+            </span>
+        </div>`;
+    wrap.parentElement.appendChild(bar);
 }
 
-function setupApsObserver() {
-    if (apsObserver) apsObserver.disconnect();
-    if (reduced) return;
-    apsObserver = new IntersectionObserver(entries => {
-        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('reveal'); apsObserver.unobserve(e.target); } });
-    }, { threshold: ANIM.thresh, rootMargin: ANIM.margin });
-    document.querySelectorAll('#aps-timeline .event-card:not(.reveal)').forEach(c => apsObserver.observe(c));
+function setupApsNav() {
+    const scroll  = document.getElementById('aps-scroll');
+    const btnPrev = document.getElementById('aps-prev');
+    const btnNext = document.getElementById('aps-next');
+    if (!scroll || !btnPrev || !btnNext) return;
+    const STEP = 480;
+    btnNext.addEventListener('click', () => scroll.scrollBy({ left:  STEP, behavior:'smooth' }));
+    btnPrev.addEventListener('click', () => scroll.scrollBy({ left: -STEP, behavior:'smooth' }));
+}
+
+/* ── Modal APS ────────────────────────────────────────────────── */
+function setupApsModal() {
+    document.getElementById('aps-modal-backdrop')?.addEventListener('click', closeApsModal);
+    document.getElementById('aps-modal-close')?.addEventListener('click',    closeApsModal);
+    document.getElementById('aps-modal-back')?.addEventListener('click',     closeApsModal);
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && !document.getElementById('aps-modal')?.hidden) closeApsModal();
+    });
+}
+
+function openApsModal(index) {
+    const item  = apsData[index];
+    const modal = document.getElementById('aps-modal');
+    if (!modal) return;
+
+    document.getElementById('aps-modal-etapa').textContent    = `Etapa ${item.etapa}`;
+    document.getElementById('aps-modal-year').textContent     = item.year;
+    document.getElementById('aps-modal-title').textContent    = item.title;
+    document.getElementById('aps-modal-subtitle').textContent = item.subtitle;
+    document.getElementById('aps-modal-desc').textContent     = item.description;
+    document.getElementById('aps-modal-why').textContent      = item.why;
+    document.getElementById('aps-modal-img').src              = item.image || '';
+    document.getElementById('aps-modal-img').alt              = item.title;
+
+    const linkEl = document.getElementById('aps-modal-link');
+    if (item.link) { linkEl.href = item.link; linkEl.hidden = false; }
+    else           { linkEl.hidden = true; }
+
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    document.getElementById('aps-modal-close')?.focus();
+    apsModalIdx = index;
+}
+
+function closeApsModal() {
+    const modal = document.getElementById('aps-modal');
+    if (!modal) return;
+    modal.hidden = true;
+    document.body.style.overflow = '';
+    if (apsModalIdx >= 0) {
+        const nodes = document.querySelectorAll('.aps-node__circle');
+        if (nodes[apsModalIdx]) nodes[apsModalIdx].focus();
+    }
+    apsModalIdx = -1;
 }
 
 /* ════════════════════════════════════════════════════════════
-   SC — LÍNEA HORIZONTAL
+   SC — LÍNEA HORIZONTAL (franja multicolor, sin números)
    ════════════════════════════════════════════════════════════ */
 let scObserver  = null;
 let activeScIdx = -1;
@@ -145,15 +220,14 @@ function renderSc() {
     const datesBar  = document.getElementById('sc-dates');
     if (!rowTop || !rowBot) return;
 
-    rowTop.innerHTML = '';
-    rowBot.innerHTML = '';
+    rowTop.innerHTML    = '';
+    rowBot.innerHTML    = '';
     photosBar.innerHTML = '';
     datesBar.innerHTML  = '';
 
     scData.forEach((item, i) => {
         const isTop = i % 2 === 0;
-        const num   = i + 1;                          // número del evento (1…19)
-        const el    = createScEvent(item, i, isTop, num);
+        const el    = createScEvent(item, i, isTop);
         (isTop ? rowTop : rowBot).appendChild(el);
 
         // Foto circular en la franja
@@ -171,10 +245,10 @@ function renderSc() {
 
     setupScNav();
     setupScObserver();
-    setupModal();
+    setupScModal();
 }
 
-function createScEvent(item, index, isTop, num) {
+function createScEvent(item, index, isTop) {
     const el = document.createElement('div');
     el.className = 'sc-event';
     el.setAttribute('role', 'listitem');
@@ -187,81 +261,72 @@ function createScEvent(item, index, isTop, num) {
         el.style.setProperty('--sc-stagger', `${Math.min(index * ANIM.step, ANIM.max)}ms`);
     }
 
-    /* Caja del ícono:
-       - Fondo azul degradado
-       - Si hay imagen JPG local (item.icon), se muestra encima tapando el número
-       - Si no hay imagen, se muestra el número grande y blanco
-       Esto replica exactamente la imagen de referencia:
-       algunos eventos muestran imagen, otros muestran número */
+    /* Solo imagen JPG (sin número).
+       Fondo azul como fallback si no hay imagen. */
     const iconHtml = `
         <div class="sc-icon-box">
-            <span class="sc-num">${num}</span>
             ${item.icon ? `<img src="${item.icon}" alt="" loading="lazy">` : ''}
         </div>`;
-
     const labelHtml = `
         <div class="sc-label">
             <span class="sc-title">${esc(item.title)}</span>
         </div>`;
-
     const stemHtml = `<div class="sc-stem" aria-hidden="true"></div>`;
 
-    /* FILA TOP: texto arriba → stem → ícono abajo (pegado a la franja)
-       FILA BOT: ícono arriba (pegado a la franja) → stem → texto abajo */
-    if (isTop) {
-        el.innerHTML = labelHtml + stemHtml + iconHtml;
-    } else {
-        el.innerHTML = iconHtml + stemHtml + labelHtml;
-    }
+    /* Fila TOP: texto arriba → stem → ícono abajo (pegado a la franja)
+       Fila BOT: ícono arriba (pegado a la franja) → stem → texto abajo */
+    el.innerHTML = isTop
+        ? labelHtml + stemHtml + iconHtml
+        : iconHtml  + stemHtml + labelHtml;
 
-    el.addEventListener('click',   () => openModal(index));
+    el.addEventListener('click',   () => openScModal(index));
     el.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(index); }
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openScModal(index); }
     });
     return el;
 }
 
-/* Navegación con flechas */
 function setupScNav() {
-    const scroll   = document.getElementById('sc-scroll');
-    const btnPrev  = document.getElementById('sc-prev');
-    const btnNext  = document.getElementById('sc-next');
+    const scroll  = document.getElementById('sc-scroll');
+    const btnPrev = document.getElementById('sc-prev');
+    const btnNext = document.getElementById('sc-next');
     if (!scroll || !btnPrev || !btnNext) return;
-
     const STEP = 480;
-    btnNext.addEventListener('click', () => scroll.scrollBy({ left:  STEP, behavior: 'smooth' }));
-    btnPrev.addEventListener('click', () => scroll.scrollBy({ left: -STEP, behavior: 'smooth' }));
+    btnNext.addEventListener('click', () => scroll.scrollBy({ left:  STEP, behavior:'smooth' }));
+    btnPrev.addEventListener('click', () => scroll.scrollBy({ left: -STEP, behavior:'smooth' }));
 }
 
 function setupScObserver() {
     if (scObserver) scObserver.disconnect();
     if (reduced) return;
     scObserver = new IntersectionObserver(entries => {
-        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('reveal'); scObserver.unobserve(e.target); } });
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('reveal'); scObserver.unobserve(e.target); }
+        });
     }, { threshold: ANIM.thresh, rootMargin: ANIM.margin });
     document.querySelectorAll('#sc-row-top .sc-event:not(.reveal), #sc-row-bottom .sc-event:not(.reveal)')
         .forEach(c => scObserver.observe(c));
 }
 
-/* ── Modal SC ────────────────────────────────────────────────── */
-function setupModal() {
-    document.getElementById('sc-modal-backdrop')?.addEventListener('click', closeModal);
-    document.getElementById('sc-modal-close')?.addEventListener('click',    closeModal);
+/* ── Modal SC ─────────────────────────────────────────────────── */
+function setupScModal() {
+    document.getElementById('sc-modal-backdrop')?.addEventListener('click', closeScModal);
+    document.getElementById('sc-modal-close')?.addEventListener('click',    closeScModal);
     document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && !document.getElementById('sc-modal')?.hidden) closeModal();
+        if (e.key === 'Escape' && !document.getElementById('sc-modal')?.hidden) closeScModal();
     });
 }
 
-function openModal(index) {
+function openScModal(index) {
     const item  = scData[index];
     const modal = document.getElementById('sc-modal');
     if (!modal) return;
 
-    document.getElementById('sc-modal-img').src              = item.image || '';
-    document.getElementById('sc-modal-img').alt              = `Imagen: ${item.title}`;
-    document.getElementById('sc-modal-year').textContent     = item.year;
-    document.getElementById('sc-modal-title').textContent    = item.title;
-    document.getElementById('sc-modal-desc').textContent     = item.description;
+    document.getElementById('sc-modal-img').src           = item.image || '';
+    document.getElementById('sc-modal-img').alt           = item.title;
+    document.getElementById('sc-modal-year').textContent  = item.year;
+    document.getElementById('sc-modal-title').textContent = item.title;
+    document.getElementById('sc-modal-desc').textContent  = item.description;
 
     const linkEl = document.getElementById('sc-modal-link');
     if (item.link) { linkEl.href = item.link; linkEl.hidden = false; }
@@ -273,7 +338,7 @@ function openModal(index) {
     activeScIdx = index;
 }
 
-function closeModal() {
+function closeScModal() {
     const modal = document.getElementById('sc-modal');
     if (!modal) return;
     modal.hidden = true;
@@ -285,30 +350,20 @@ function closeModal() {
     activeScIdx = -1;
 }
 
-/* ── Helpers ─────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   HELPERS
+   ════════════════════════════════════════════════════════════ */
 function esc(str) {
     return String(str)
         .replace(/&/g,'&amp;').replace(/</g,'&lt;')
         .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-function apslinkBtn(href) {
-    return `
-        <a href="${href}" target="_blank" rel="noopener noreferrer" class="link-btn">
-            Más información
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2.5"
-                 stroke-linecap="round" aria-hidden="true">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                <polyline points="15 3 21 3 21 9"></polyline>
-                <line x1="10" y1="14" x2="21" y2="3"></line>
-            </svg>
-        </a>`;
-}
 
-/* ── Inicio ──────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   INICIO
+   ════════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
     initTabs();
-    // Renderizar la pestaña activa por defecto (APS)
     renderAps();
     document.getElementById('panel-aps').dataset.init = '1';
 });

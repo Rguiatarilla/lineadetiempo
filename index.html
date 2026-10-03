@@ -50,20 +50,112 @@
          id="panel-aps" role="tabpanel"
          aria-labelledby="tab-aps">
 
-        <div class="panel-hero panel-hero--aps">
-            <p class="panel-hero__eyebrow">Atención Primaria en Salud · APS</p>
-            <h2 class="panel-hero__title">Evolución de la <em>APS</em></h2>
-            <p class="panel-hero__sub">
-                Principales hitos que marcaron el desarrollo de la Atención Primaria
-                en Salud en América Latina y Colombia
-            </p>
+        <!-- Hero APS estilo "Un viaje por la historia" -->
+        <div class="aps-hero">
+            <div class="aps-hero__left">
+                <span class="aps-hero__kicker">Un viaje por la historia de la</span>
+                <h2 class="aps-hero__title">Atención Primaria<br>en Salud</h2>
+                <p class="aps-hero__sub">
+                    Un recorrido por los momentos más importantes que han transformado
+                    <strong>la forma</strong> de entender la salud y acercarla a las
+                    personas, sus familias y sus comunidades.
+                </p>
+            </div>
+            <div class="aps-hero__quote" aria-hidden="true">
+                <blockquote>
+                    «La Atención Primaria en Salud no es solo un modelo de atención.
+                    Es una forma de entender la salud desde las personas, sus familias,
+                    sus comunidades y sus territorios.»
+                </blockquote>
+            </div>
         </div>
 
-        <div class="container">
-            <div class="timeline timeline--vertical"
-                 id="aps-timeline" role="list"
-                 aria-label="Línea del tiempo APS"></div>
+        <!-- Línea horizontal de etapas APS -->
+        <div class="aps-wrapper">
+            <div class="aps-scroll" id="aps-scroll">
+                <div class="aps-stage">
+                    <!-- Etiquetas superiores (título + descripción corta) -->
+                    <div class="aps-labels-top" id="aps-labels-top"></div>
+                    <!-- Línea central con nodos -->
+                    <div class="aps-track">
+                        <div class="aps-line" aria-hidden="true"></div>
+                        <div class="aps-nodes" id="aps-nodes"></div>
+                    </div>
+                    <!-- Años y "Conocer más" debajo -->
+                    <div class="aps-labels-bottom" id="aps-labels-bottom"></div>
+                </div>
+            </div>
+            <!-- Navegación -->
+            <button class="aps-nav aps-nav--prev" id="aps-prev" aria-label="Anterior">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <button class="aps-nav aps-nav--next" id="aps-next" aria-label="Siguiente">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
         </div>
+
+        <!-- Modal de detalle APS (estilo tarjeta sepia) -->
+        <div class="aps-modal" id="aps-modal" role="dialog" aria-modal="true"
+             aria-labelledby="aps-modal-title" hidden>
+            <div class="aps-modal__backdrop" id="aps-modal-backdrop"></div>
+            <div class="aps-modal__panel">
+                <button class="aps-modal__close" id="aps-modal-close" aria-label="Cerrar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+                <!-- Cabecera tipo infografía -->
+                <div class="aps-modal__header">
+                    <div class="aps-modal__header-left">
+                        <span class="aps-modal__etapa-tag" id="aps-modal-etapa"></span>
+                        <div class="aps-modal__year-block">
+                            <span class="aps-modal__year" id="aps-modal-year"></span>
+                            <h3 class="aps-modal__title" id="aps-modal-title"></h3>
+                            <p class="aps-modal__subtitle" id="aps-modal-subtitle"></p>
+                        </div>
+                    </div>
+                    <div class="aps-modal__header-img">
+                        <img id="aps-modal-img" src="" alt="" loading="lazy">
+                    </div>
+                </div>
+                <!-- Cuerpo -->
+                <div class="aps-modal__body">
+                    <div class="aps-modal__section">
+                        <div class="aps-modal__section-icon" aria-hidden="true">🔍</div>
+                        <div>
+                            <h4 class="aps-modal__section-title">¿Qué estaba pasando?</h4>
+                            <p class="aps-modal__section-text" id="aps-modal-desc"></p>
+                        </div>
+                    </div>
+                    <div class="aps-modal__section">
+                        <div class="aps-modal__section-icon" aria-hidden="true">💚</div>
+                        <div>
+                            <h4 class="aps-modal__section-title">¿Por qué es importante para nuestro recorrido?</h4>
+                            <p class="aps-modal__section-text" id="aps-modal-why"></p>
+                        </div>
+                    </div>
+                    <div class="aps-modal__links">
+                        <span class="aps-modal__links-title">🔗 Enlace de referencia</span>
+                        <a class="aps-modal__link" id="aps-modal-link"
+                           target="_blank" rel="noopener noreferrer" hidden>
+                            Más información
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <line x1="10" y1="14" x2="21" y2="3"></line>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="aps-modal__footer">
+                    <button class="aps-modal__back" id="aps-modal-back">
+                        ← Volver a la línea de tiempo
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- ══ PANEL SC ═══════════════════════════════════════════ -->
