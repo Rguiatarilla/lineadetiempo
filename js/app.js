@@ -389,25 +389,28 @@ function renderSc() {
     const datesBar  = document.getElementById('sc-dates');
     if (!rowTop || !rowBot) return;
 
-    rowTop.innerHTML    = '';
-    rowBot.innerHTML    = '';
-    photosBar.innerHTML = '';
-    datesBar.innerHTML  = '';
+    rowTop.innerHTML = rowBot.innerHTML = photosBar.innerHTML = datesBar.innerHTML = '';
 
     scData.forEach((item, i) => {
-        const isTop = i % 2 === 0;
-        const el    = createScEvent(item, i, isTop);
+        const isTop  = i % 2 === 0;
+        const stagger = Math.min(i * ANIM.step, ANIM.max);
+
+        /* Evento (ícono + texto) */
+        const el = createScEvent(item, i, isTop, stagger);
         (isTop ? rowTop : rowBot).appendChild(el);
 
-        // Foto circular en la franja
+        /* Foto circular en la franja — usa el ÍCONO local (JPG) como foto */
         const slot = document.createElement('div');
         slot.className = 'sc-photo-slot';
-        slot.innerHTML = `<img class="sc-photo" src="${item.image}" alt="" loading="lazy">`;
+        /* Si hay icono local lo usa, si no la foto de Unsplash (solo funciona online) */
+        const photoSrc = item.icon || item.image || '';
+        slot.innerHTML = `<img class="sc-photo" src="${photoSrc}" alt="" loading="lazy">`;
         photosBar.appendChild(slot);
 
-        // Fecha
+        /* Fecha */
         const dItem = document.createElement('div');
         dItem.className = 'sc-date-item';
+        dItem.style.setProperty('--sc-stagger', `${stagger}ms`);
         dItem.innerHTML = `<span>${esc(item.year)}</span>`;
         datesBar.appendChild(dItem);
     });
@@ -417,7 +420,7 @@ function renderSc() {
     setupScModal();
 }
 
-function createScEvent(item, index, isTop) {
+function createScEvent(item, index, isTop, stagger) {
     const el = document.createElement('div');
     el.className = 'sc-event';
     el.setAttribute('role', 'listitem');
@@ -427,23 +430,24 @@ function createScEvent(item, index, isTop) {
     if (reduced) {
         el.classList.add('reveal');
     } else {
-        el.style.setProperty('--sc-stagger', `${Math.min(index * ANIM.step, ANIM.max)}ms`);
+        el.style.setProperty('--sc-stagger', `${stagger}ms`);
     }
 
-    /* Solo imagen JPG (sin número).
-       Fondo azul como fallback si no hay imagen. */
-    const iconHtml = `
-        <div class="sc-icon-box">
-            ${item.icon ? `<img src="${item.icon}" alt="" loading="lazy">` : ''}
-        </div>`;
-    const labelHtml = `
-        <div class="sc-label">
-            <span class="sc-title">${esc(item.title)}</span>
-        </div>`;
-    const stemHtml = `<div class="sc-stem" aria-hidden="true"></div>`;
+    /* Ícono: SOLO usa item.icon (JPG local).
+       Si no hay icono, muestra un ícono SVG genérico con el número.
+       NUNCA usa item.image (Unsplash) porque se bloquea con file:// */
+    let iconContent;
+    if (item.icon) {
+        iconContent = `<img src="${item.icon}" alt="" loading="lazy">`;
+    } else {
+        const num = index + 1;
+        iconContent = `<span class="sc-icon-num">${num}</span>`;
+    }
 
-    /* Fila TOP: texto arriba → stem → ícono abajo (pegado a la franja)
-       Fila BOT: ícono arriba (pegado a la franja) → stem → texto abajo */
+    const iconHtml  = `<div class="sc-icon-box">${iconContent}</div>`;
+    const labelHtml = `<div class="sc-label"><span class="sc-title">${esc(item.title)}</span></div>`;
+    const stemHtml  = `<div class="sc-stem" aria-hidden="true"></div>`;
+
     el.innerHTML = isTop
         ? labelHtml + stemHtml + iconHtml
         : iconHtml  + stemHtml + labelHtml;
@@ -467,13 +471,22 @@ function setupScNav() {
 
 function setupScObserver() {
     if (scObserver) scObserver.disconnect();
-    if (reduced) return;
+    if (reduced) {
+        document.querySelectorAll('#sc-row-top .sc-event, #sc-row-bottom .sc-event, .sc-date-item').forEach(c => {
+            c.classList.add('reveal');
+        });
+        return;
+    }
     scObserver = new IntersectionObserver(entries => {
         entries.forEach(e => {
             if (e.isIntersecting) { e.target.classList.add('reveal'); scObserver.unobserve(e.target); }
         });
-    }, { threshold: ANIM.thresh, rootMargin: ANIM.margin });
-    document.querySelectorAll('#sc-row-top .sc-event:not(.reveal), #sc-row-bottom .sc-event:not(.reveal)')
+    }, {
+        root: document.getElementById('sc-scroll'),
+        threshold: 0.12,
+        rootMargin: '0px 40px 0px 40px',
+    });
+    document.querySelectorAll('#sc-row-top .sc-event:not(.reveal), #sc-row-bottom .sc-event:not(.reveal), .sc-date-item:not(.reveal)')
         .forEach(c => scObserver.observe(c));
 }
 
