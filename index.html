@@ -50,23 +50,27 @@
          id="panel-aps" role="tabpanel"
          aria-labelledby="tab-aps">
 
-        <!-- Hero APS estilo "Un viaje por la historia" -->
+        <!-- Hero APS con imagen de fondo estilo boceto sepia -->
         <div class="aps-hero">
-            <div class="aps-hero__left">
-                <span class="aps-hero__kicker">Un viaje por la historia de la</span>
-                <h2 class="aps-hero__title">Atención Primaria<br>en Salud</h2>
-                <p class="aps-hero__sub">
-                    Un recorrido por los momentos más importantes que han transformado
-                    <strong>la forma</strong> de entender la salud y acercarla a las
-                    personas, sus familias y sus comunidades.
-                </p>
-            </div>
-            <div class="aps-hero__quote" aria-hidden="true">
-                <blockquote>
-                    «La Atención Primaria en Salud no es solo un modelo de atención.
-                    Es una forma de entender la salud desde las personas, sus familias,
-                    sus comunidades y sus territorios.»
-                </blockquote>
+            <div class="aps-hero__bg" aria-hidden="true"></div>
+            <div class="aps-hero__overlay" aria-hidden="true"></div>
+            <div class="aps-hero__content">
+                <div class="aps-hero__left">
+                    <span class="aps-hero__kicker">Un viaje por la historia de la</span>
+                    <span class="aps-hero__title-sm">Un recorrido por los momentos más importantes que han transformado</span>
+                    <h2 class="aps-hero__title">Atención Primaria<br>en Salud</h2>
+                    <p class="aps-hero__sub">
+                        <strong>la forma</strong> de entender la salud y acercarla a las
+                        personas, sus familias y sus comunidades.
+                    </p>
+                </div>
+                <div class="aps-hero__quote">
+                    <blockquote>
+                        La Atención Primaria en Salud no es solo un modelo de atención.
+                        Es una forma de entender la salud desde las personas, sus familias,
+                        sus comunidades y sus territorios.
+                    </blockquote>
+                </div>
             </div>
         </div>
 
@@ -94,67 +98,89 @@
             </button>
         </div>
 
-        <!-- Modal de detalle APS (estilo tarjeta sepia) -->
+        <!-- Modal de detalle APS — estilo infografía acuarela -->
         <div class="aps-modal" id="aps-modal" role="dialog" aria-modal="true"
              aria-labelledby="aps-modal-title" hidden>
             <div class="aps-modal__backdrop" id="aps-modal-backdrop"></div>
             <div class="aps-modal__panel">
-                <button class="aps-modal__close" id="aps-modal-close" aria-label="Cerrar">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-                <!-- Cabecera tipo infografía -->
+
+                <button class="aps-modal__close" id="aps-modal-close" aria-label="Cerrar">✕</button>
+
+                <!-- ── CABECERA ─────────────────────────────── -->
                 <div class="aps-modal__header">
+                    <!-- Lado izquierdo: etapa + estetoscopio + año + título + subtítulo banner -->
                     <div class="aps-modal__header-left">
-                        <span class="aps-modal__etapa-tag" id="aps-modal-etapa"></span>
-                        <div class="aps-modal__year-block">
-                            <span class="aps-modal__year" id="aps-modal-year"></span>
-                            <h3 class="aps-modal__title" id="aps-modal-title"></h3>
-                            <p class="aps-modal__subtitle" id="aps-modal-subtitle"></p>
+                        <div class="aps-modal__top-row">
+                            <span class="aps-modal__etapa-tag" id="aps-modal-etapa">ETAPA 1</span>
+                            <span class="aps-modal__deco-icon" aria-hidden="true">🦶</span>
+                        </div>
+                        <div class="aps-modal__year-row">
+                            <span class="aps-modal__stethoscope" aria-hidden="true">🩺</span>
+                            <span class="aps-modal__year" id="aps-modal-year">1978</span>
+                            <h3 class="aps-modal__title" id="aps-modal-title">Título</h3>
+                        </div>
+                        <div class="aps-modal__subtitle-banner">
+                            <p class="aps-modal__subtitle" id="aps-modal-subtitle">Subtítulo</p>
                         </div>
                     </div>
+                    <!-- Lado derecho: ilustración acuarela -->
                     <div class="aps-modal__header-img">
                         <img id="aps-modal-img" src="" alt="" loading="lazy">
                     </div>
                 </div>
-                <!-- Cuerpo -->
+
+                <!-- ── CUERPO ───────────────────────────────── -->
                 <div class="aps-modal__body">
-                    <div class="aps-modal__section">
-                        <div class="aps-modal__section-icon" aria-hidden="true">🔍</div>
-                        <div>
-                            <h4 class="aps-modal__section-title">¿Qué estaba pasando?</h4>
-                            <p class="aps-modal__section-text" id="aps-modal-desc"></p>
+
+                    <!-- Sección "El gran momento del viaje" -->
+                    <div class="aps-modal__moment">
+                        <div class="aps-modal__moment-header">
+                            <span aria-hidden="true">🌿</span>
+                            <h4 id="aps-modal-moment-title">El gran momento del viaje</h4>
+                            <span aria-hidden="true">🌿</span>
+                        </div>
+                        <p id="aps-modal-desc" class="aps-modal__desc-text"></p>
+                        <p id="aps-modal-why"  class="aps-modal__desc-text"></p>
+                    </div>
+
+                    <!-- "¿Qué cambia a partir de aquí?" -->
+                    <div class="aps-modal__changes">
+                        <h4 class="aps-modal__changes-title">¿Qué cambia a partir de aquí?</h4>
+                        <div class="aps-modal__icons-row" id="aps-modal-icons">
+                            <!-- generado por JS según la etapa -->
                         </div>
                     </div>
-                    <div class="aps-modal__section">
-                        <div class="aps-modal__section-icon" aria-hidden="true">💚</div>
-                        <div>
-                            <h4 class="aps-modal__section-title">¿Por qué es importante para nuestro recorrido?</h4>
-                            <p class="aps-modal__section-text" id="aps-modal-why"></p>
+
+                    <!-- Sección de enlaces -->
+                    <div class="aps-modal__links-section">
+                        <h4 class="aps-modal__links-label">📎 Enlace de búsqueda</h4>
+                        <div class="aps-modal__links-row">
+                            <a class="aps-modal__link-pill" id="aps-modal-link"
+                               target="_blank" rel="noopener noreferrer" hidden>
+                                🌐 Más información
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                     aria-hidden="true">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                    <polyline points="15 3 21 3 21 9"></polyline>
+                                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                                </svg>
+                            </a>
                         </div>
                     </div>
-                    <div class="aps-modal__links">
-                        <span class="aps-modal__links-title">🔗 Enlace de referencia</span>
-                        <a class="aps-modal__link" id="aps-modal-link"
-                           target="_blank" rel="noopener noreferrer" hidden>
-                            Más información
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
-                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                <polyline points="15 3 21 3 21 9"></polyline>
-                                <line x1="10" y1="14" x2="21" y2="3"></line>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
+
+                </div><!-- /body -->
+
+                <!-- ── PIE ──────────────────────────────────── -->
                 <div class="aps-modal__footer">
                     <button class="aps-modal__back" id="aps-modal-back">
                         ← Volver a la línea de tiempo
                     </button>
+                    <span class="aps-modal__heart" aria-hidden="true">🤍</span>
                 </div>
-            </div>
-        </div>
+
+            </div><!-- /panel -->
+        </div><!-- /modal -->
 
     </div>
 

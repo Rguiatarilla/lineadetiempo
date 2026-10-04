@@ -66,7 +66,7 @@ function renderAps() {
         }
         labelsTop.appendChild(top);
 
-        /* ── Nodo circular ── */
+        /* ── Nodo circular (usa imagen del evento con filtro sepia) ── */
         const node = document.createElement('div');
         node.className = 'aps-node';
         node.setAttribute('role', 'listitem');
@@ -74,9 +74,8 @@ function renderAps() {
             <button class="aps-node__circle"
                     aria-label="Etapa ${item.etapa}: ${item.title}. Haz clic para ver más."
                     data-idx="${i}">
-                ${item.icon
-                    ? `<img src="${item.icon}" alt="" loading="lazy">`
-                    : `<span style="font-size:.7rem;font-weight:800;color:#c0392b">${item.year}</span>`}
+                <img src="${item.image}" alt="${esc(item.title)}" loading="lazy">
+                <span class="aps-node__num">${item.etapa}</span>
             </button>`;
         node.querySelector('.aps-node__circle').addEventListener('click', () => openApsModal(i));
         nodes.appendChild(node);
@@ -171,12 +170,77 @@ function setupApsModal() {
     });
 }
 
+/* Conceptos clave por etapa (iconos circulares debajo del texto) */
+const APS_CONCEPTS = {
+    1: [
+        {icon:'🗺️', name:'Organización de servicios'},
+        {icon:'🏥', name:'Niveles de atención'},
+        {icon:'👥', name:'Acceso a la población'},
+    ],
+    2: [
+        {icon:'💊', name:'Promoción de la salud'},
+        {icon:'🛡️', name:'Prevención de la enfermedad'},
+        {icon:'🤝', name:'Participación comunitaria'},
+        {icon:'🏠', name:'Atención cercana y accesible'},
+        {icon:'⚖️', name:'Equidad en salud'},
+        {icon:'👨‍👩‍👧', name:'Participación de personas, familias y comunidades'},
+    ],
+    3: [
+        {icon:'🌱', name:'Promoción del bienestar'},
+        {icon:'🏘️', name:'Entornos saludables'},
+        {icon:'📣', name:'Empoderamiento comunitario'},
+        {icon:'🤲', name:'Participación activa'},
+    ],
+    4: [
+        {icon:'💼', name:'Financiación del sistema'},
+        {icon:'🏥', name:'Acceso a servicios'},
+        {icon:'📋', name:'Organización del sistema'},
+        {icon:'🔄', name:'Transformación del modelo'},
+    ],
+    5: [
+        {icon:'⚖️', name:'Equidad en salud'},
+        {icon:'🌍', name:'Sistemas integrales'},
+        {icon:'👤', name:'Centrado en personas'},
+        {icon:'📈', name:'Reducción de desigualdades'},
+    ],
+    6: [
+        {icon:'🏘️', name:'Atención integral'},
+        {icon:'🤝', name:'Participación comunitaria'},
+        {icon:'🔗', name:'Acción intersectorial'},
+        {icon:'📍', name:'Enfoque territorial'},
+    ],
+    7: [
+        {icon:'⚖️', name:'Derecho fundamental'},
+        {icon:'🏃', name:'Atención oportuna'},
+        {icon:'✅', name:'Atención eficaz'},
+        {icon:'💚', name:'Atención de calidad'},
+    ],
+    8: [
+        {icon:'🛤️', name:'Rutas de atención'},
+        {icon:'🌐', name:'Compromiso global'},
+        {icon:'🏥', name:'Atención accesible'},
+        {icon:'🔄', name:'Atención sostenible'},
+    ],
+    9: [
+        {icon:'🏘️', name:'Trabajo territorial'},
+        {icon:'👨‍⚕️', name:'Equipos Básicos de Salud'},
+        {icon:'📊', name:'Equidad y bienestar'},
+        {icon:'🛡️', name:'Prevención'},
+    ],
+    10: [
+        {icon:'👣', name:'Fortalecimiento continuo'},
+        {icon:'🤝', name:'Participación comunitaria'},
+        {icon:'💚', name:'Atención integral'},
+        {icon:'📍', name:'Acercamiento al territorio'},
+    ],
+};
+
 function openApsModal(index) {
     const item  = apsData[index];
     const modal = document.getElementById('aps-modal');
     if (!modal) return;
 
-    document.getElementById('aps-modal-etapa').textContent    = `Etapa ${item.etapa}`;
+    document.getElementById('aps-modal-etapa').textContent    = `ETAPA ${item.etapa}`;
     document.getElementById('aps-modal-year').textContent     = item.year;
     document.getElementById('aps-modal-title').textContent    = item.title;
     document.getElementById('aps-modal-subtitle').textContent = item.subtitle;
@@ -185,9 +249,23 @@ function openApsModal(index) {
     document.getElementById('aps-modal-img').src              = item.image || '';
     document.getElementById('aps-modal-img').alt              = item.title;
 
+    /* Título dinámico de la sección central */
+    document.getElementById('aps-modal-moment-title').textContent =
+        index === 0 ? '¿Qué estaba pasando?' : 'El gran momento del viaje';
+
+    /* Enlace */
     const linkEl = document.getElementById('aps-modal-link');
     if (item.link) { linkEl.href = item.link; linkEl.hidden = false; }
     else           { linkEl.hidden = true; }
+
+    /* Iconos de conceptos */
+    const iconsRow = document.getElementById('aps-modal-icons');
+    const concepts = APS_CONCEPTS[item.etapa] || [];
+    iconsRow.innerHTML = concepts.map(c => `
+        <div class="aps-modal__concept">
+            <div class="aps-modal__concept-icon">${c.icon}</div>
+            <span class="aps-modal__concept-name">${c.name}</span>
+        </div>`).join('');
 
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
