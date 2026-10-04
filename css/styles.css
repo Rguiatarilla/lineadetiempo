@@ -255,7 +255,14 @@ body{
     flex-wrap:wrap;
 }
 
-.aps-hero__left{flex:1;min-width:260px}
+.aps-hero__left{
+    flex:1;min-width:260px;
+    animation:slideInLeft .9s var(--ease-out) .1s both;
+}
+@keyframes slideInLeft{
+    from{opacity:0;transform:translateX(-40px)}
+    to  {opacity:1;transform:translateX(0)}
+}
 
 .aps-hero__kicker{
     font-size:.72rem;font-weight:700;
@@ -289,6 +296,11 @@ body{
     flex:0 0 300px;
     position:relative;
     padding:18px 20px 16px 28px;
+    animation:slideInRight .9s var(--ease-out) .3s both;
+}
+@keyframes slideInRight{
+    from{opacity:0;transform:translateX(40px)}
+    to  {opacity:1;transform:translateX(0)}
 }
 .aps-hero__quote::before{
     content:'\201C';
@@ -350,6 +362,15 @@ body{
     display:flex;flex-direction:column;
     align-items:center;text-align:center;
     gap:4px;
+    /* Animación de entrada desde arriba */
+    opacity:0;
+    transform:translateY(-16px);
+    transition:opacity .5s var(--ease-out),transform .5s var(--ease-out);
+    transition-delay:var(--aps-stagger,0ms);
+}
+.aps-label-top.reveal{
+    opacity:1;
+    transform:translateY(0);
 }
 .aps-etapa-tag{
     font-size:.6rem;font-weight:800;
@@ -383,6 +404,12 @@ body{
         #2980b9 75%,#8e44ad 100%);
     border-radius:2px;
     z-index:0;
+    transform-origin:left center;
+    animation:lineGrowH 1.8s var(--ease-out) .2s both;
+}
+@keyframes lineGrowH{
+    from{transform:scaleX(0);opacity:0}
+    to  {transform:scaleX(1);opacity:1}
 }
 .aps-nodes{
     display:flex;align-items:center;
@@ -390,11 +417,20 @@ body{
     gap:0;
 }
 
-/* Nodo individual */
+/* Nodo individual — pop desde abajo con stagger */
 .aps-node{
     width:160px;flex-shrink:0;
     display:flex;justify-content:center;
     position:relative;
+    opacity:0;
+    transform:translateY(22px) scale(.82);
+    transition:opacity .55s var(--ease-out),
+               transform .55s var(--ease-spring);
+    transition-delay:var(--aps-stagger,0ms);
+}
+.aps-node.reveal{
+    opacity:1;
+    transform:translateY(0) scale(1);
 }
 .aps-node__circle{
     width:58px;height:58px;
@@ -448,6 +484,15 @@ body{
     display:flex;flex-direction:column;
     align-items:center;text-align:center;
     gap:5px;
+    /* Animación de entrada desde abajo */
+    opacity:0;
+    transform:translateY(16px);
+    transition:opacity .5s var(--ease-out),transform .5s var(--ease-out);
+    transition-delay:var(--aps-stagger,0ms);
+}
+.aps-label-bottom.reveal{
+    opacity:1;
+    transform:translateY(0);
 }
 .aps-year-badge{
     font-size:.88rem;font-weight:900;
@@ -494,6 +539,93 @@ body{
 .aps-nav--next{right:10px}
 .aps-nav:hover{background:#fff;transform:translateY(-50%) scale(1.1)}
 .aps-nav:focus-visible{outline:2px solid #c0392b;outline-offset:2px}
+
+/* ─ Barra de Valores APS ─────────────────────────────────────────── */
+.aps-valores{
+    display:flex;
+    align-items:stretch;
+    flex-wrap:wrap;
+    background:#fdf5e8;
+    border-top:2px solid #ddc89a;
+    padding:0;
+    overflow:hidden;
+    animation:slideUpFade .7s var(--ease-out) .4s both;
+}
+@keyframes slideUpFade{
+    from{opacity:0;transform:translateY(30px)}
+    to  {opacity:1;transform:translateY(0)}
+}
+
+/* Cada valor */
+.aps-valor{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    flex:1;
+    min-width:160px;
+    padding:18px 20px;
+}
+
+/* Separador vertical */
+.aps-valor__sep{
+    width:1px;
+    background:linear-gradient(to bottom, transparent 15%, #ddc89a 50%, transparent 85%);
+    align-self:stretch;
+    flex-shrink:0;
+}
+
+/* Icono SVG */
+.aps-valor__icon{
+    width:42px;height:42px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+}
+.aps-valor__icon svg{
+    width:38px;height:38px;
+}
+
+/* Texto */
+.aps-valor__text{
+    display:flex;flex-direction:column;gap:3px;
+    min-width:0;
+}
+.aps-valor__name{
+    font-size:.78rem;font-weight:800;
+    color:#3a2010;
+    display:block;
+    letter-spacing:.01em;
+}
+.aps-valor__desc{
+    font-size:.7rem;color:#7a5030;
+    line-height:1.45;
+    display:block;
+}
+
+/* Bloque frase final */
+.aps-valor--frase{
+    align-items:center;
+    justify-content:center;
+    text-align:right;
+    flex:1.2;
+    min-width:180px;
+    position:relative;
+    border-left:1px solid #ddc89a;
+}
+.aps-valor__frase{
+    font-family:var(--ff-serif);
+    font-size:.82rem;
+    color:#c0392b;
+    line-height:1.6;
+    font-style:italic;
+    margin:0;
+}
+.aps-valor__frase em{
+    font-weight:700;
+    font-style:italic;
+}
+.aps-valor__heart{
+    position:absolute;bottom:12px;right:14px;
+    font-size:1.1rem;opacity:.55;
+}
 
 /* ─ Modal APS (estilo tarjeta sepia / acuarela) ─────────────────── */
 .aps-modal{
@@ -896,7 +1028,8 @@ body{
 .sc-event.reveal{opacity:1}
 .sc-row--top    .sc-event{transform:translateY(-20px);justify-content:flex-end}
 .sc-row--bottom .sc-event{transform:translateY(20px); justify-content:flex-start}
-.sc-event.reveal{transform:translateY(0)!important}
+.sc-row--top    .sc-event.reveal{transform:translateY(0)}
+.sc-row--bottom .sc-event.reveal{transform:translateY(0)}
 
 /* ── Caja numérica azul (estilo imagen referencia) ── */
 .sc-icon-box{

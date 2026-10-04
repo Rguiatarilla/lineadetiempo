@@ -32,7 +32,12 @@ function initTabs() {
             panel.hidden = false;
             panel.classList.add('active');
 
-            if (target === 'aps' && !panel.dataset.init) { renderAps(); panel.dataset.init = '1'; }
+            if (target === 'aps' && !panel.dataset.init) {
+                renderAps();
+                panel.dataset.init = '1';
+                /* Revelar los nodos visibles de inmediato al cambiar de pestaña */
+                setTimeout(() => setupApsObserver(), 50);
+            }
             if (target === 'sc'  && !panel.dataset.init) { renderSc();  panel.dataset.init = '1'; }
         });
     });
@@ -54,10 +59,12 @@ function renderAps() {
     labelsBot.innerHTML = '';
 
     apsData.forEach((item, i) => {
-        /* ── Etiqueta SUPERIOR (etapa tag + título + desc corta) ── */
+        const delay = Math.min(i * 90, 700); // stagger 90ms por elemento, máx 700ms
+
+        /* ── Etiqueta SUPERIOR ── */
         const top = document.createElement('div');
         top.className = 'aps-label-top';
-        // Solo pares arriba (0,2,4…), impares quedan vacíos arriba
+        top.style.setProperty('--aps-stagger', `${delay}ms`);
         if (i % 2 === 0) {
             top.innerHTML = `
                 <span class="aps-etapa-tag">Etapa ${item.etapa}</span>
@@ -66,9 +73,10 @@ function renderAps() {
         }
         labelsTop.appendChild(top);
 
-        /* ── Nodo circular (usa imagen del evento con filtro sepia) ── */
+        /* ── Nodo circular ── */
         const node = document.createElement('div');
         node.className = 'aps-node';
+        node.style.setProperty('--aps-stagger', `${delay}ms`);
         node.setAttribute('role', 'listitem');
         node.innerHTML = `
             <button class="aps-node__circle"
@@ -80,11 +88,11 @@ function renderAps() {
         node.querySelector('.aps-node__circle').addEventListener('click', () => openApsModal(i));
         nodes.appendChild(node);
 
-        /* ── Etiqueta INFERIOR (año + subtítulo + "Conocer más") ── */
+        /* ── Etiqueta INFERIOR ── */
         const bot = document.createElement('div');
         bot.className = 'aps-label-bottom';
+        bot.style.setProperty('--aps-stagger', `${delay}ms`);
         if (i % 2 !== 0) {
-            // Impares van abajo
             bot.innerHTML = `
                 <span class="aps-etapa-tag" style="font-size:.55rem">Etapa ${item.etapa}</span>
                 <span class="aps-year-badge">${esc(item.year)}</span>
@@ -105,49 +113,101 @@ function renderAps() {
     renderApsValores();
     setupApsNav();
     setupApsModal();
+    setupApsObserver();
 }
 
 function renderApsValores() {
-    // Añade barra de valores si no existe
     if (document.getElementById('aps-valores')) return;
-    const wrap = document.getElementById('aps-scroll')?.closest('.aps-wrapper');
-    if (!wrap) return;
+    const wrapper = document.getElementById('aps-scroll')?.closest('.tab-panel--aps');
+    if (!wrapper) return;
+
     const bar = document.createElement('div');
     bar.className = 'aps-valores';
     bar.id = 'aps-valores';
+
+    /* SVG paths inline para los 5 iconos (estilo minimal oscuro como en la imagen) */
+    const svgEquidad = `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="14" cy="13" r="5" stroke="#3a2010" stroke-width="2"/>
+        <circle cx="26" cy="13" r="5" stroke="#3a2010" stroke-width="2"/>
+        <circle cx="20" cy="22" r="5" stroke="#3a2010" stroke-width="2"/>
+        <path d="M7 34c0-4.4 3.1-8 7-8m18 8c0-4.4-3.1-8-7-8m-11 0c1.2-1.3 3-2 5-2s3.8.7 5 2" stroke="#3a2010" stroke-width="2" stroke-linecap="round"/>
+    </svg>`;
+
+    const svgParticipacion = `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="12" y1="32" x2="12" y2="18" stroke="#3a2010" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="20" y1="32" x2="20" y2="12" stroke="#3a2010" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="28" y1="32" x2="28" y2="20" stroke="#3a2010" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M8 32h24" stroke="#3a2010" stroke-width="2" stroke-linecap="round"/>
+    </svg>`;
+
+    const svgIntersectorialidad = `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 26c2-6 8-10 12-10s10 4 12 10" stroke="#3a2010" stroke-width="2" stroke-linecap="round"/>
+        <path d="M15 24c1-3 2.5-5 5-5s4 2 5 5" stroke="#3a2010" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="20" cy="24" r="3" fill="#3a2010"/>
+        <path d="M8 26 C8 26 7 28 8 30" stroke="#3a2010" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M32 26 C32 26 33 28 32 30" stroke="#3a2010" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>`;
+
+    const svgIntegralidad = `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 32 C12 26 8 20 8 15.5 8 11.4 11.4 8 15.5 8c2.4 0 4.6 1.2 6 3.1C22.9 9.2 25.1 8 27.5 8 31.6 8 35 11.4 35 15.5 35 20 31 26 20 32z" fill="#3a2010" opacity="0.85"/>
+    </svg>`;
+
+    const svgTerritorio = `<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 6 C13.4 6 8 11.4 8 18c0 10 12 20 12 20s12-10 12-20C32 11.4 26.6 6 20 6z" stroke="#3a2010" stroke-width="2" fill="none"/>
+        <circle cx="20" cy="18" r="4" stroke="#3a2010" stroke-width="2"/>
+    </svg>`;
+
     bar.innerHTML = `
         <div class="aps-valor">
-            <span class="aps-valor__icon">⚖️</span>
-            <span class="aps-valor__name">Equidad</span>
-            <span class="aps-valor__desc">Para que todas las personas tengan las mismas oportunidades.</span>
+            <div class="aps-valor__icon">${svgEquidad}</div>
+            <div class="aps-valor__text">
+                <strong class="aps-valor__name">Equidad</strong>
+                <span class="aps-valor__desc">Para que todas las personas tengan las mismas oportunidades.</span>
+            </div>
         </div>
+        <div class="aps-valor__sep" aria-hidden="true"></div>
         <div class="aps-valor">
-            <span class="aps-valor__icon">🤝</span>
-            <span class="aps-valor__name">Participación</span>
-            <span class="aps-valor__desc">Porque la comunidad hace parte de las decisiones.</span>
+            <div class="aps-valor__icon">${svgParticipacion}</div>
+            <div class="aps-valor__text">
+                <strong class="aps-valor__name">Participación</strong>
+                <span class="aps-valor__desc">Porque la comunidad hace parte de las decisiones.</span>
+            </div>
         </div>
+        <div class="aps-valor__sep" aria-hidden="true"></div>
         <div class="aps-valor">
-            <span class="aps-valor__icon">🌐</span>
-            <span class="aps-valor__name">Intersectorialidad</span>
-            <span class="aps-valor__desc">Trabajando juntos por el bienestar de todas las personas.</span>
+            <div class="aps-valor__icon">${svgIntersectorialidad}</div>
+            <div class="aps-valor__text">
+                <strong class="aps-valor__name">Intersectorialidad</strong>
+                <span class="aps-valor__desc">Trabajando juntos por el bienestar de todas las personas.</span>
+            </div>
         </div>
+        <div class="aps-valor__sep" aria-hidden="true"></div>
         <div class="aps-valor">
-            <span class="aps-valor__icon">💚</span>
-            <span class="aps-valor__name">Integralidad</span>
-            <span class="aps-valor__desc">Atendiendo a la persona de manera completa en cada etapa de su vida.</span>
+            <div class="aps-valor__icon">${svgIntegralidad}</div>
+            <div class="aps-valor__text">
+                <strong class="aps-valor__name">Integralidad</strong>
+                <span class="aps-valor__desc">Atendiendo a la persona de manera completa en cada etapa de su vida.</span>
+            </div>
         </div>
+        <div class="aps-valor__sep" aria-hidden="true"></div>
         <div class="aps-valor">
-            <span class="aps-valor__icon">📍</span>
-            <span class="aps-valor__name">Territorio</span>
-            <span class="aps-valor__desc">Soluciones pensadas desde y para cada comunidad.</span>
+            <div class="aps-valor__icon">${svgTerritorio}</div>
+            <div class="aps-valor__text">
+                <strong class="aps-valor__name">Territorio</strong>
+                <span class="aps-valor__desc">Soluciones pensadas desde y para cada comunidad.</span>
+            </div>
         </div>
-        <div class="aps-valor" style="flex:2;min-width:200px">
-            <span class="aps-valor__icon">✨</span>
-            <span class="aps-valor__name" style="font-size:.7rem;line-height:1.4">
-                Cada paso cuenta,<br>cada historia transforma,<br>cada persona importa.
-            </span>
+        <div class="aps-valor__sep" aria-hidden="true"></div>
+        <div class="aps-valor aps-valor--frase">
+            <p class="aps-valor__frase">
+                Cada paso cuenta,<br>
+                cada historia transforma,<br>
+                <em>cada persona importa.</em>
+            </p>
+            <span class="aps-valor__heart" aria-hidden="true">🤍</span>
         </div>`;
-    wrap.parentElement.appendChild(bar);
+
+    wrapper.appendChild(bar);
 }
 
 function setupApsNav() {
@@ -158,6 +218,37 @@ function setupApsNav() {
     const STEP = 480;
     btnNext.addEventListener('click', () => scroll.scrollBy({ left:  STEP, behavior:'smooth' }));
     btnPrev.addEventListener('click', () => scroll.scrollBy({ left: -STEP, behavior:'smooth' }));
+}
+
+/* IntersectionObserver para los nodos y etiquetas APS */
+let apsObserver = null;
+function setupApsObserver() {
+    if (apsObserver) apsObserver.disconnect();
+    if (reduced) {
+        document.querySelectorAll('.aps-node,.aps-label-top,.aps-label-bottom').forEach(el => {
+            el.classList.add('reveal');
+        });
+        return;
+    }
+
+    /* Usar el scroll container como root para detectar visibilidad horizontal */
+    const scrollRoot = document.getElementById('aps-scroll');
+
+    apsObserver = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('reveal');
+                apsObserver.unobserve(e.target);
+            }
+        });
+    }, {
+        root: scrollRoot,
+        threshold: 0.15,
+        rootMargin: '0px 30px 0px 30px',
+    });
+
+    document.querySelectorAll('.aps-node:not(.reveal),.aps-label-top:not(.reveal),.aps-label-bottom:not(.reveal)')
+        .forEach(el => apsObserver.observe(el));
 }
 
 /* ── Modal APS ────────────────────────────────────────────────── */
