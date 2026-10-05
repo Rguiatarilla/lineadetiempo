@@ -1,7 +1,7 @@
 /**
  * app.js  v6
  * APS  → infografía horizontal tipo "Un viaje por la historia"
- * SC   → línea horizontal con franja multicolor (sin números)
+ * SC   → 3 tarjetas de etapa (con rango de años) + modal por hito
  * Depende de js/data.js (apsData, scData)
  */
 'use strict';
@@ -379,84 +379,121 @@ function closeApsModal() {
 /* ════════════════════════════════════════════════════════════
    SC — LÍNEA HORIZONTAL (franja multicolor, sin números)
    ════════════════════════════════════════════════════════════ */
-let scObserver  = null;
-let activeScIdx = -1;
+let scObserver   = null;
+
+/* Set de íconos SVG de línea, variados por tipo de hito (se asignan por índice) */
+const SC_ICONS = [
+    /* megáfono / campaña */
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15 8a4 4 0 0 1 0 8"/><path d="M8 18v2"/></svg>`,
+    /* personas / seminario internacional */
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="2.6"/><circle cx="16.5" cy="9" r="2.1"/><path d="M4 19c0-2.8 2.2-4.6 5-4.6s5 1.8 5 4.6"/><path d="M14.5 19c0-2 1-3.3 3-3.3s3 1.3 3 3.3"/></svg>`,
+    /* edificio / departamento universitario */
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V8l8-4 8 4v13"/><path d="M4 21h16"/><path d="M9 21v-5h6v5"/><path d="M9 11h.01M15 11h.01"/></svg>`,
+    /* mano con corazón / promotoras */
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-6-4-6-8a3 3 0 0 1 6-1 3 3 0 0 1 6 1c0 4-6 8-6 8z"/></svg>`,
+    /* birrete / escuela */
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-4 10 4-10 4z"/><path d="M6 11v4c0 1.5 2.7 2.5 6 2.5s6-1 6-2.5v-4"/><path d="M22 9v4"/></svg>`,
+    /* idea / determinación social */
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.3 1 2.5h6c0-1.2.3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg>`,
+    /* libros / seminario ciencias sociales */
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a1 1 0 0 1 1-1h5v15H5a1 1 0 0 0-1 1z"/><path d="M20 5a1 1 0 0 0-1-1h-5v15h5a1 1 0 0 1 1 1z"/></svg>`,
+    /* documento / tesis */
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/><path d="M9 13h6M9 17h6M9 9h2"/></svg>`,
+    /* bandera / fundación institución */
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>`,
+    /* red / asociación */
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/><path d="M12 7v4M12 11l-5.5 5M12 11l5.5 5"/></svg>`,
+    /* lazo / memoria */
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 11s3-2.5 3-5a3 3 0 0 0-6 0c0 2.5 3 5 3 5z"/><path d="M12 11l-4 10M12 11l4 10"/></svg>`,
+    /* balanza / derecho - constitución */
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 21h10"/><path d="M5 7h14"/><path d="M5 7l-2.5 5a2.5 2.5 0 0 0 5 0z"/><path d="M19 7l-2.5 5a2.5 2.5 0 0 0 5 0z"/></svg>`,
+];
+
+/* Devuelve una lista plana de hitos con su etapa y un índice de ícono */
+function flattenScHitos() {
+    const flat = [];
+    scData.forEach((etapa, ei) => {
+        etapa.hitos.forEach((hito, hi) => {
+            flat.push({ etapa, ei, hito, hi });
+        });
+    });
+    return flat;
+}
 
 function renderSc() {
-    const rowTop    = document.getElementById('sc-row-top');
-    const rowBot    = document.getElementById('sc-row-bottom');
-    const photosBar = document.getElementById('sc-braid-photos');
-    const datesBar  = document.getElementById('sc-dates');
-    if (!rowTop || !rowBot) return;
+    const nodes = document.getElementById('sc-nodes');
+    if (!nodes) return;
+    nodes.innerHTML = '';
 
-    rowTop.innerHTML = rowBot.innerHTML = photosBar.innerHTML = datesBar.innerHTML = '';
+    const flat = flattenScHitos();
 
-    scData.forEach((item, i) => {
-        const isTop  = i % 2 === 0;
-        const stagger = Math.min(i * ANIM.step, ANIM.max);
+    flat.forEach((entry, gi) => {
+        const { etapa, ei, hito, hi } = entry;
+        const isTop = gi % 2 === 0;
+        const icon  = SC_ICONS[gi % SC_ICONS.length];
 
-        /* Evento (ícono + texto) */
-        const el = createScEvent(item, i, isTop, stagger);
-        (isTop ? rowTop : rowBot).appendChild(el);
+        const node = document.createElement('div');
+        node.className = `sc-node sc-stage--${etapa.etapa} ${isTop ? 'sc-node--top' : 'sc-node--bottom'}`;
+        node.style.setProperty('--sc-stagger', `${Math.min(gi * 70, 560)}ms`);
+        if (reduced) node.classList.add('reveal');
 
-        /* Foto circular en la franja — usa el ÍCONO local (JPG) como foto */
-        const slot = document.createElement('div');
-        slot.className = 'sc-photo-slot';
-        /* Si hay icono local lo usa, si no la foto de Unsplash (solo funciona online) */
-        const photoSrc = item.icon || item.image || '';
-        slot.innerHTML = `<img class="sc-photo" src="${photoSrc}" alt="" loading="lazy">`;
-        photosBar.appendChild(slot);
+        const label = `
+            <div class="sc-node__label">
+                <span class="sc-node__title">${esc(hito.title)}</span>
+            </div>`;
 
-        /* Fecha */
-        const dItem = document.createElement('div');
-        dItem.className = 'sc-date-item';
-        dItem.style.setProperty('--sc-stagger', `${stagger}ms`);
-        dItem.innerHTML = `<span>${esc(item.year)}</span>`;
-        datesBar.appendChild(dItem);
+        const box = `
+            <button class="sc-node__box" data-etapa="${ei}" data-hito="${hi}"
+                    aria-label="${esc(hito.year)}: ${esc(hito.title)}. Ver detalle.">
+                <span class="sc-node__icon">${icon}</span>
+            </button>`;
+
+        const stem = `<span class="sc-node__stem" aria-hidden="true"></span>`;
+        const year = `<span class="sc-node__year">${esc(hito.year)}</span>`;
+
+        node.innerHTML = isTop
+            ? label + stem + box + year
+            : year + box + stem + label;
+
+        nodes.appendChild(node);
     });
 
+    /* Click en el hito abre el modal de detalle */
+    nodes.querySelectorAll('.sc-node__box').forEach(btn => {
+        btn.addEventListener('click', () => {
+            openScModal(parseInt(btn.dataset.etapa), parseInt(btn.dataset.hito));
+        });
+    });
+
+    drawScRibbon();
     setupScNav();
     setupScObserver();
     setupScModal();
 }
 
-function createScEvent(item, index, isTop, stagger) {
-    const el = document.createElement('div');
-    el.className = 'sc-event';
-    el.setAttribute('role', 'listitem');
-    el.setAttribute('tabindex', '0');
-    el.setAttribute('aria-label', `${item.year}: ${item.title}`);
+/* Ajusta el path de la onda al ancho real de la fila de hitos */
+function drawScRibbon() {
+    const timeline = document.getElementById('sc-cards');
+    const path     = document.querySelector('.sc-ribbon__wave');
+    const svg      = document.querySelector('.sc-ribbon');
+    const nodes    = document.getElementById('sc-nodes');
+    if (!timeline || !path || !svg || !nodes) return;
 
-    if (reduced) {
-        el.classList.add('reveal');
-    } else {
-        el.style.setProperty('--sc-stagger', `${stagger}ms`);
+    const w = Math.max(nodes.scrollWidth, timeline.clientWidth);
+    const h = 150;
+    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    svg.style.width = `${w}px`;
+
+    /* Onda sinusoidal: dos bordes paralelos para dar grosor de "cinta" */
+    const mid = h / 2, amp = 26, period = 220, thick = 34;
+    const top = [], bot = [];
+    for (let x = 0; x <= w; x += 20) {
+        const y = mid + amp * Math.sin((x / period) * Math.PI * 2);
+        top.push(`${x},${(y - thick / 2).toFixed(1)}`);
+        bot.push(`${x},${(y + thick / 2).toFixed(1)}`);
     }
-
-    /* Ícono: SOLO usa item.icon (JPG local).
-       Si no hay icono, muestra un ícono SVG genérico con el número.
-       NUNCA usa item.image (Unsplash) porque se bloquea con file:// */
-    let iconContent;
-    if (item.icon) {
-        iconContent = `<img src="${item.icon}" alt="" loading="lazy">`;
-    } else {
-        const num = index + 1;
-        iconContent = `<span class="sc-icon-num">${num}</span>`;
-    }
-
-    const iconHtml  = `<div class="sc-icon-box">${iconContent}</div>`;
-    const labelHtml = `<div class="sc-label"><span class="sc-title">${esc(item.title)}</span></div>`;
-    const stemHtml  = `<div class="sc-stem" aria-hidden="true"></div>`;
-
-    el.innerHTML = isTop
-        ? labelHtml + stemHtml + iconHtml
-        : iconHtml  + stemHtml + labelHtml;
-
-    el.addEventListener('click',   () => openScModal(index));
-    el.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openScModal(index); }
-    });
-    return el;
+    const d = `M ${top.join(' L ')} L ${bot.reverse().join(' L ')} Z`;
+    path.setAttribute('d', d);
 }
 
 function setupScNav() {
@@ -464,60 +501,64 @@ function setupScNav() {
     const btnPrev = document.getElementById('sc-prev');
     const btnNext = document.getElementById('sc-next');
     if (!scroll || !btnPrev || !btnNext) return;
-    const STEP = 480;
-    btnNext.addEventListener('click', () => scroll.scrollBy({ left:  STEP, behavior:'smooth' }));
-    btnPrev.addEventListener('click', () => scroll.scrollBy({ left: -STEP, behavior:'smooth' }));
+    const STEP = 420;
+    btnNext.onclick = () => scroll.scrollBy({ left:  STEP, behavior: 'smooth' });
+    btnPrev.onclick = () => scroll.scrollBy({ left: -STEP, behavior: 'smooth' });
 }
 
 function setupScObserver() {
     if (scObserver) scObserver.disconnect();
     if (reduced) {
-        document.querySelectorAll('#sc-row-top .sc-event, #sc-row-bottom .sc-event, .sc-date-item').forEach(c => {
-            c.classList.add('reveal');
-        });
+        document.querySelectorAll('.sc-node').forEach(c => c.classList.add('reveal'));
         return;
     }
     scObserver = new IntersectionObserver(entries => {
         entries.forEach(e => {
             if (e.isIntersecting) { e.target.classList.add('reveal'); scObserver.unobserve(e.target); }
         });
-    }, {
-        root: document.getElementById('sc-scroll'),
-        threshold: 0.12,
-        rootMargin: '0px 40px 0px 40px',
-    });
-    document.querySelectorAll('#sc-row-top .sc-event:not(.reveal), #sc-row-bottom .sc-event:not(.reveal), .sc-date-item:not(.reveal)')
-        .forEach(c => scObserver.observe(c));
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.sc-node:not(.reveal)').forEach(c => scObserver.observe(c));
 }
+
+/* Hito actualmente abierto (para el retorno de foco al cerrar el modal) */
+let scLastTrigger = null;
 
 /* ── Modal SC ─────────────────────────────────────────────────── */
 function setupScModal() {
     document.getElementById('sc-modal-backdrop')?.addEventListener('click', closeScModal);
     document.getElementById('sc-modal-close')?.addEventListener('click',    closeScModal);
+
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape' && !document.getElementById('sc-modal')?.hidden) closeScModal();
     });
 }
 
-function openScModal(index) {
-    const item  = scData[index];
+/* Modal de HITO: descripción completa de un hito */
+function openScModal(etapaIdx, hitoIdx) {
+    const etapa = scData[etapaIdx];
+    const hito  = etapa?.hitos[hitoIdx];
     const modal = document.getElementById('sc-modal');
-    if (!modal) return;
+    if (!hito || !modal) return;
 
-    document.getElementById('sc-modal-img').src           = item.image || '';
-    document.getElementById('sc-modal-img').alt           = item.title;
-    document.getElementById('sc-modal-year').textContent  = item.year;
-    document.getElementById('sc-modal-title').textContent = item.title;
-    document.getElementById('sc-modal-desc').textContent  = item.description;
+    /* Recordar el elemento que abrió el modal para devolverle el foco al cerrar */
+    scLastTrigger = document.querySelector(
+        `.sc-node__box[data-etapa="${etapaIdx}"][data-hito="${hitoIdx}"]`);
+
+    document.getElementById('sc-modal-img').src           = etapa.image || '';
+    document.getElementById('sc-modal-img').alt           = hito.title;
+    document.getElementById('sc-modal-etapa').textContent = `Etapa ${etapa.etapa} · ${etapa.year}`;
+    document.getElementById('sc-modal-year').textContent  = hito.year;
+    document.getElementById('sc-modal-title').textContent = hito.title;
+    document.getElementById('sc-modal-desc').textContent  = hito.description;
 
     const linkEl = document.getElementById('sc-modal-link');
-    if (item.link) { linkEl.href = item.link; linkEl.hidden = false; }
+    if (hito.link) { linkEl.href = hito.link; linkEl.hidden = false; }
     else           { linkEl.hidden = true; }
 
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
     document.getElementById('sc-modal-close')?.focus();
-    activeScIdx = index;
 }
 
 function closeScModal() {
@@ -525,11 +566,9 @@ function closeScModal() {
     if (!modal) return;
     modal.hidden = true;
     document.body.style.overflow = '';
-    if (activeScIdx >= 0) {
-        const all = document.querySelectorAll('#sc-row-top .sc-event, #sc-row-bottom .sc-event');
-        if (all[activeScIdx]) all[activeScIdx].focus();
-    }
-    activeScIdx = -1;
+    /* Devolver el foco al hito que abrió el modal, si existe */
+    if (scLastTrigger) scLastTrigger.focus();
+    scLastTrigger = null;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -548,4 +587,12 @@ document.addEventListener('DOMContentLoaded', () => {
     initTabs();
     renderAps();
     document.getElementById('panel-aps').dataset.init = '1';
+});
+
+/* Redibujar la cinta SC al cambiar el tamaño de la ventana */
+let scResizeTimer = null;
+window.addEventListener('resize', () => {
+    if (!document.getElementById('sc-nodes')?.children.length) return;
+    clearTimeout(scResizeTimer);
+    scResizeTimer = setTimeout(drawScRibbon, 150);
 });

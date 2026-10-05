@@ -6,7 +6,7 @@
     <title>Línea del Tiempo: APS y Salud Colectiva</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -200,51 +200,39 @@
             </p>
         </div>
 
-        <!-- Franja horizontal SC -->
+        <!-- Línea de tiempo horizontal ilustrada (cinta ondulada + hitos) -->
         <div class="sc-wrapper">
             <div class="sc-scroll" id="sc-scroll">
-                <div class="sc-stage">
-
-                    <!-- Fila superior (eventos impares: 0,2,4...) -->
-                    <div class="sc-row sc-row--top" id="sc-row-top"></div>
-
-                    <!-- Franja trenzada central -->
-                    <div class="sc-braid" aria-hidden="true">
-                        <div class="sc-braid__inner">
-                            <div class="sc-braid__band sc-braid__band--1"></div>
-                            <div class="sc-braid__band sc-braid__band--2"></div>
-                            <div class="sc-braid__band sc-braid__band--3"></div>
-                            <div class="sc-braid__band sc-braid__band--4"></div>
-                            <div class="sc-braid__band sc-braid__band--5"></div>
-                        </div>
-                        <!-- Fotos de personas integradas en la franja -->
-                        <div class="sc-braid__photos" id="sc-braid-photos"></div>
-                    </div>
-
-                    <!-- Fila inferior (eventos pares: 1,3,5...) -->
-                    <div class="sc-row sc-row--bottom" id="sc-row-bottom"></div>
-
-                    <!-- Fechas en la base -->
-                    <div class="sc-dates" id="sc-dates"></div>
+                <div class="sc-timeline" id="sc-cards">
+                    <!-- Cinta ondulada tejida de fondo -->
+                    <svg class="sc-ribbon" preserveAspectRatio="none" aria-hidden="true">
+                        <defs>
+                            <linearGradient id="sc-ribbon-grad" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="0%"  stop-color="#e36a1a"/>
+                                <stop offset="33%" stop-color="#e3b31a"/>
+                                <stop offset="55%" stop-color="#2a9d3f"/>
+                                <stop offset="80%" stop-color="#2670c4"/>
+                                <stop offset="100%" stop-color="#9b2fa5"/>
+                            </linearGradient>
+                        </defs>
+                        <path class="sc-ribbon__wave" fill="url(#sc-ribbon-grad)"></path>
+                    </svg>
+                    <!-- Fila de hitos (inyectados por JS) -->
+                    <div class="sc-nodes" id="sc-nodes"></div>
                 </div>
             </div>
-
             <!-- Flechas de navegación -->
             <button class="sc-nav sc-nav--prev" id="sc-prev" aria-label="Anterior">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
+                     stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </button>
             <button class="sc-nav sc-nav--next" id="sc-next" aria-label="Siguiente">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
+                     stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </button>
         </div>
 
-        <!-- Modal de detalle SC -->
+        <!-- Modal de detalle de un hito SC -->
         <div class="sc-modal" id="sc-modal" role="dialog"
              aria-modal="true" aria-labelledby="sc-modal-title" hidden>
             <div class="sc-modal__backdrop" id="sc-modal-backdrop"></div>
@@ -258,6 +246,7 @@
                 </button>
                 <div class="sc-modal__img-wrap">
                     <img id="sc-modal-img" src="" alt="" class="sc-modal__img">
+                    <span class="sc-modal__etapa-badge" id="sc-modal-etapa"></span>
                 </div>
                 <div class="sc-modal__body">
                     <span class="sc-modal__year" id="sc-modal-year"></span>
