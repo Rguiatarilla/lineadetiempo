@@ -958,6 +958,7 @@ body{
     border:3.5px solid transparent;
     background:linear-gradient(135deg,var(--c1),var(--c2)) border-box;
     -webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);
+    mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);
     -webkit-mask-composite:xor;mask-composite:exclude;
 }
 .sc-node__box:hover{
@@ -993,7 +994,8 @@ body{
 .sc-node__title{
     font-size:.74rem;font-weight:700;color:#2a3a2a;line-height:1.32;
     transition:color var(--dur-fast);
-    overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;
+    overflow:hidden;display:-webkit-box;
+    -webkit-line-clamp:4;line-clamp:4;-webkit-box-orient:vertical;
 }
 .sc-node:hover .sc-node__title{color:var(--c2)}
 
