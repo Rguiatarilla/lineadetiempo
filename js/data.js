@@ -1,7 +1,7 @@
 /**
  * data.js — Datos de las dos líneas de tiempo
  * apsData:  10 etapas de Atención Primaria en Salud (línea horizontal)
- * scData:   3 etapas de Salud Colectiva con 14 hitos en total (línea horizontal)
+ * scData:   3 etapas de Salud Colectiva con 16 hitos en total (línea horizontal)
  */
 
 /* ══════════════════════════════════════════════════
@@ -127,32 +127,59 @@ const scData = [
             {
                 year: "1918 – 1941",
                 title: "Campañas Sanitarias contra el Pian en Antioquia",
+                variant: "teal",
+                icon: "assets/images/campañas-sanitarias.png",
                 description: "Las campañas contra el pian en Antioquia llevaron por primera vez de manera sistemática la atención médica desde las ciudades hacia las zonas rurales y marginadas. Se implementaron unidades sanitarias descentralizadas, comisiones de higiene rural y médicos itinerantes, mostrando que la salud debía atender también las condiciones de vida y las necesidades de las comunidades rurales, y no centrarse únicamente en la enfermedad individual.",
                 link: "https://revistas.unal.edu.co/index.php/achsc/article/view/97207"
             },
             {
                 year: "1955 – 1956",
                 title: "Seminarios Internacionales (Viña del Mar / Tehuacán)",
+                variant: "green",
+                icon: "assets/images/Seminarios.png",
                 description: "Los seminarios de Viña del Mar y Tehuacán promovieron en América Latina una visión más amplia de la salud, considerando no solo la atención de la enfermedad, sino también la prevención, la comunidad y las condiciones que influyen en la salud de las personas. Estos encuentros hacen parte de los antecedentes que contribuyeron a la evolución de una mirada más integral y colectiva de la salud, que posteriormente se relacionaría con el desarrollo de la Atención Primaria en Salud.",
                 link: "https://www.scielo.br/j/sausoc/a/bTHWsnDCM3h9Fpj73YGSLgn/?lang=pt"
             },
             {
                 year: "1956",
                 title: "Depto. Medicina Preventiva y Salud Pública (U. de Antioquia)",
+                variant: "orange",
+                icon: "assets/images/Salud-publica-territorio.png",
+                footer: "Héctor Abad Gómez",
                 description: "La creación de este departamento, impulsada por Héctor Abad Gómez, fortaleció en Colombia un enfoque preventivo y comunitario de la salud. Su propuesta buscaba acercar la formación médica a las comunidades y reconocer los problemas sociales relacionados con la salud, constituyendo un antecedente importante para el posterior desarrollo de la Medicina Social y la Salud Colectiva.",
                 link: "https://gacetasanitaria.org/es-hector-abad-gomez-1921-1987-medico-educador-articulo-S0213911120300662"
             },
             {
                 year: "1958",
                 title: "Programa de Promotoras Rurales de Salud (Santo Domingo)",
+                variant: "green",
+                icon: "assets/images/promotoras-rurales.png",
                 description: "El programa fortaleció una nueva forma de entender la salud en las zonas rurales: la comunidad podía participar activamente en el cuidado, la prevención y la solución de sus propios problemas de salud. Las promotoras, capacitadas en higiene, educación sanitaria, saneamiento, primeros auxilios y vacunación, permitieron acercar estos conocimientos a las comunidades y reducir la dependencia de especialistas. Este modelo se convirtió en un antecedente importante de la atención comunitaria y territorial que posteriormente caracterizaría a la Salud Colectiva.",
                 link: "https://gacetasanitaria.org/es-hector-abad-gomez-1921-1987-medico-educador-articulo-S0213911120300662"
             },
             {
                 year: "1963",
                 title: "Escuela Nacional de Salud Pública (Medellín)",
+                variant: "teal",
+                icon: "assets/images/Escuela-nacional-salud-publica.png",
                 description: "Héctor Abad Gómez fundó la Escuela Nacional de Salud Pública para profundizar en el estudio de la medicina social. Este hecho fortaleció la formación académica en salud pública y consolidó en Colombia una mirada que buscaba comprender la salud más allá de la enfermedad individual.",
                 link: "https://www.gacetasanitaria.org/es-hector-abad-gomez-1921-1987-medico-educador-articulo-resumen-S0213911120300662"
+            },
+            {
+                year: "2003 – 2004",
+                title: "Doctorado en Salud Pública (U. Nacional de Colombia)",
+                variant: "orange",
+                icon: "assets/images/escuela-salud-publica.png",
+                description: "La Universidad Nacional de Colombia creó en 2003 el Programa Interfacultades de Doctorado en Salud Pública, que inició actividades en febrero de 2004. Fue el primer doctorado en Salud Pública del país y representó un avance importante en la consolidación académica del campo en Colombia. Su propósito fue formar investigadores de alto nivel capaces de producir conocimiento sobre los problemas de salud, con énfasis en los determinantes sociales. El programa fortaleció una mirada integral de la salud, articulando dimensiones biológicas, sociales, políticas y económicas, y dando continuidad a una tradición de medicina social comprometida con la comprensión de las condiciones que afectan la salud de las poblaciones.",
+                link: "https://saludpublica.unal.edu.co/"
+            },
+            {
+                year: "2007",
+                title: "Modelo de Salud Mental Comunitaria (Ordenanza 026 Nariño)",
+                variant: "orange",
+                icon: "assets/images/modelo-salud-mental.png",
+                description: "Mediante la Ordenanza 026 de 2007, Nariño adoptó el Modelo de Atención Primaria en Salud Mental de Base Comunitaria, buscando llevar la atención en salud mental de los hospitales hacia las comunidades. El modelo fortaleció la promoción, la prevención y la intervención temprana, mediante la formación y participación de agentes de salud mental comunitarios. Para 2011, había sido implementado en el 100 % de los municipios del departamento y se habían formado aproximadamente 4.000 agentes. Este proceso representó una aplicación territorial de los principios de la Atención Primaria en Salud y la Medicina Social, acercando el cuidado de la salud mental a las comunidades y reconociendo las necesidades propias de cada territorio.",
+                link: "https://www.minsalud.gov.co/"
             }
         ]
     },
@@ -167,18 +194,24 @@ const scData = [
             {
                 year: "1960 – 1975",
                 title: "Jaime Breilh y la Determinación Social de la Salud",
+                variant: "green",
+                icon: "assets/images/Salud-colectiva-ciudadbienestar.png",
                 description: "Principal referente de la Medicina Social y la Salud Colectiva latinoamericana. Contribuyó al desarrollo y posicionamiento de la categoría de Determinación Social de la Salud, desde la cual propone comprender el proceso salud-enfermedad como resultado de procesos históricos, sociales, económicos, políticos, culturales y ambientales que configuran las condiciones de vida y los modos de vivir de las colectividades.",
                 link: "https://www.comunidadandina.org/"
             },
             {
                 year: "1972",
                 title: "Seminario de Ciencias Sociales Aplicadas a la Medicina (Cuenca)",
+                variant: "orange",
+                icon: "assets/images/Seminarios-ciencias-sociales.png",
                 description: "El seminario, impulsado por Juan César García, reunió investigadores y docentes de América Latina para discutir cómo las ciencias sociales podrían ayudar a comprender la relación entre sociedad, salud y enfermedad. Representó un punto clave en el surgimiento de la Medicina Social Latinoamericana, al cuestionar que los problemas de salud pudieran explicarse únicamente desde una perspectiva biológica e individual.",
                 link: "https://www.scielo.br/j/csc/a/JwYtGBwxKGFSGp6Jv6rbSQM/?lang=pt"
             },
             {
                 year: "1975",
                 title: "Tesis 'O Dilema Preventivista' (Sergio Arouca)",
+                variant: "orange",
+                icon: "assets/images/Area-evaluacion.png",
                 description: "Sergio Arouca cuestionó los límites de la medicina preventiva, señalando que su enfoque individual y liberal no era suficiente para explicar los problemas de salud en su dimensión social. Su propuesta abrió espacio para nuevas formas de comprender la relación entre salud, enfermedad y sociedad, aportando al desarrollo de la Medicina Social Latinoamericana y posteriormente de la Salud Colectiva.",
                 link: "https://books.scielo.org/id/q7gtd"
             }
@@ -195,36 +228,48 @@ const scData = [
             {
                 year: "1976",
                 title: "Fundación del CEBES (Brasil)",
+                variant: "teal",
+                icon: "assets/images/brasil.png",
                 description: "Se fundó el Centro Brasileño de Estudios de Salud, un espacio de debate y producción de conocimiento que promovió una comprensión de la salud como un fenómeno social y político, no únicamente como un problema médico. El CEBES contribuyó a cuestionar el modelo de atención vigente y a impulsar propuestas de democratización de la salud, convirtiéndose en un referente del movimiento de Reforma Sanitaria Brasileña y del proceso que posteriormente daría origen al Sistema Único de Salud.",
                 link: "https://cebes.org.br/ano-1976/5830/"
             },
             {
                 year: "1978",
                 title: "1° Encuentro Nacional de Posgrados (Bahía)",
+                variant: "green",
+                icon: "assets/images/Salud-publica-territorio.png",
                 description: "En este encuentro se discutió y comenzó a consolidarse la Salud Colectiva como un nuevo campo de conocimiento, superando una visión de la salud centrada únicamente en la enfermedad y la atención médica. Se propuso comprender la salud y la enfermedad como procesos sociales, económicos, políticos e históricos, articulando las ciencias sociales, la epidemiología y las políticas de salud. Además, se impulsó la organización de los programas de posgrado, antecedente de la creación de ABRASCO en 1979.",
                 link: "https://abrasco.org.br/passado-presente-e-futuro-da-saude-coletiva-em-sessao-alusiva-aos-35-anos-da-abrasco-em-salvador/"
             },
             {
                 year: "1979",
                 title: "Fundación de ABRASCO (Brasil)",
+                variant: "orange",
+                icon: "assets/images/brasil.png",
                 description: "El 27 de septiembre de 1979 se fundó la Asociación Brasileña de Posgrado en Salud Colectiva (ABRASCO), agrupando profesionales, docentes y estudiantes de Medicina Social, Medicina Preventiva y Salud Pública bajo la denominación de 'Salud Colectiva'. Su creación contribuyó a institucionalizar y consolidar la Salud Colectiva como un campo académico organizado en América Latina.",
                 link: "https://abrasco.org.br/sobre-a-abrasco/historia-e-memoria/"
             },
             {
                 year: "1984",
                 title: "Fundación de ALAMES (Ouro Preto)",
+                variant: "teal",
+                icon: "assets/images/Salud-colectiva-ciudadbienestar.png",
                 description: "La creación de la Asociación Latinoamericana de Medicina Social (ALAMES) fortaleció la articulación del movimiento latinoamericano de Medicina Social, consolidando una mirada de la salud como un fenómeno social y colectivo. Su creación permitió unir experiencias, conocimientos y actores de diferentes países alrededor de una visión de salud vinculada con las condiciones de vida, la sociedad y los derechos.",
                 link: "https://alames.org/"
             },
             {
                 year: "1987",
                 title: "Asesinato de Héctor Abad Gómez",
+                variant: "teal",
+                icon: "assets/images/Muerte-abad-gomez.png",
                 description: "Fue asesinado el 25 de agosto de 1987 en Medellín. Su legado destacó la importancia de una salud comprometida con la justicia social, los derechos humanos y las condiciones de vida de las comunidades, aportando al desarrollo de la Medicina Social y la Salud Colectiva en Latinoamérica.",
                 link: "https://centrodememoriahistorica.gov.co/no-olvidamos-a-hector-abad-gomez/"
             },
             {
                 year: "1988",
                 title: "Constitución de Brasil y creación del SUS",
+                variant: "green",
+                icon: "assets/images/brasil.png",
                 description: "La Constitución de Brasil de 1988 reconoció la salud como un derecho de todas las personas y una responsabilidad del Estado. A partir de este reconocimiento se creó el Sistema Único de Salud (SUS), basado en el acceso universal, la atención integral y la participación social, fortaleciendo una visión de la salud como un derecho colectivo.",
                 link: "https://www.scielo.br/j/sausoc/a/QKtFb9PkdpcTnz7YNJyMzjN/?lang=pt"
             }
