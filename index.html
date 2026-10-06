@@ -200,25 +200,14 @@
             </p>
         </div>
 
-        <!-- Línea de tiempo horizontal ilustrada (cinta ondulada + hitos) -->
+        <!-- Línea de tiempo SC: dos filas, etapas 1+2 arriba, etapa 3 abajo -->
         <div class="sc-wrapper">
             <div class="sc-scroll" id="sc-scroll">
-                <div class="sc-timeline" id="sc-cards">
-                    <!-- Cinta ondulada tejida de fondo -->
-                    <svg class="sc-ribbon" preserveAspectRatio="none" aria-hidden="true">
-                        <defs>
-                            <linearGradient id="sc-ribbon-grad" x1="0" y1="0" x2="1" y2="0">
-                                <stop offset="0%"  stop-color="#e36a1a"/>
-                                <stop offset="33%" stop-color="#e3b31a"/>
-                                <stop offset="55%" stop-color="#2a9d3f"/>
-                                <stop offset="80%" stop-color="#2670c4"/>
-                                <stop offset="100%" stop-color="#9b2fa5"/>
-                            </linearGradient>
-                        </defs>
-                        <path class="sc-ribbon__wave" fill="url(#sc-ribbon-grad)"></path>
-                    </svg>
-                    <!-- Fila de hitos (inyectados por JS) -->
-                    <div class="sc-nodes" id="sc-nodes"></div>
+                <div class="sc-stage-track" id="sc-track">
+                    <!-- Ilustración de fondo (cinta tejida tipo collage) -->
+                    <div class="sc-bg" aria-hidden="true"></div>
+                    <!-- Fila única: todos los hitos en secuencia horizontal -->
+                    <div class="sc-nodes" id="sc-nodes" role="list"></div>
                 </div>
             </div>
             <!-- Flechas de navegación -->
@@ -232,11 +221,11 @@
             </button>
         </div>
 
-        <!-- Modal de detalle de un hito SC -->
+        <!-- Modal de detalle de un hito SC — estilo tarjeta póster textil -->
         <div class="sc-modal" id="sc-modal" role="dialog"
              aria-modal="true" aria-labelledby="sc-modal-title" hidden>
             <div class="sc-modal__backdrop" id="sc-modal-backdrop"></div>
-            <div class="sc-modal__panel">
+            <div class="sc-modal__panel" id="sc-modal-panel" data-variant="teal">
                 <button class="sc-modal__close" id="sc-modal-close" aria-label="Cerrar">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                          stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
@@ -244,25 +233,55 @@
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                 </button>
-                <div class="sc-modal__img-wrap">
-                    <img id="sc-modal-img" src="" alt="" class="sc-modal__img">
-                    <span class="sc-modal__etapa-badge" id="sc-modal-etapa"></span>
+
+                <!-- Icono circular superior -->
+                <div class="sc-modal__avatar">
+                    <img id="sc-modal-img" src="" alt="" class="sc-modal__avatar-img">
                 </div>
-                <div class="sc-modal__body">
-                    <span class="sc-modal__year" id="sc-modal-year"></span>
-                    <h3 class="sc-modal__title" id="sc-modal-title"></h3>
-                    <p class="sc-modal__desc"  id="sc-modal-desc"></p>
-                    <a class="sc-modal__link"  id="sc-modal-link"
-                       target="_blank" rel="noopener noreferrer" hidden>
-                        Más información
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2.5"
-                             stroke-linecap="round" aria-hidden="true">
-                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                            <polyline points="15 3 21 3 21 9"></polyline>
-                            <line x1="10" y1="14" x2="21" y2="3"></line>
-                        </svg>
-                    </a>
+
+                <!-- Badge de etapa + año -->
+                <span class="sc-modal__etapa-badge" id="sc-modal-etapa"></span>
+
+                <!-- Título en mayúsculas -->
+                <h3 class="sc-modal__title" id="sc-modal-title"></h3>
+
+                <!-- Año del hito -->
+                <span class="sc-modal__year" id="sc-modal-year"></span>
+
+                <!-- Descripción justificada -->
+                <p class="sc-modal__desc" id="sc-modal-desc"></p>
+
+                <!-- Enlace -->
+                <a class="sc-modal__link" id="sc-modal-link"
+                   target="_blank" rel="noopener noreferrer" hidden>
+                    Más información
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" aria-hidden="true">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                </a>
+
+                <!-- Navegación entre hitos -->
+                <div class="sc-modal__nav">
+                    <button class="sc-modal__nav-btn sc-modal__nav-btn--prev" id="sc-modal-prev" aria-label="Hito anterior">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        <span>Anterior</span>
+                    </button>
+                    <span class="sc-modal__nav-counter" id="sc-modal-counter"></span>
+                    <button class="sc-modal__nav-btn sc-modal__nav-btn--next" id="sc-modal-next" aria-label="Hito siguiente">
+                        <span>Siguiente</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                </div>
+
+                <!-- Greca tejida + pie APS -->
+                <div class="sc-modal__weave" aria-hidden="true"></div>
+                <div class="sc-modal__footer">
+                    <span class="sc-modal__footer-note" id="sc-modal-footer"></span>
+                    <span class="sc-modal__brand">APS</span>
                 </div>
             </div>
         </div>
