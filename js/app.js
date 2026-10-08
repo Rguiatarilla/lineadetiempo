@@ -418,82 +418,110 @@ function flattenScHitos() {
     return flat;
 }
 
+/* Línea de tiempo: 4 etapas en zigzag sobre la cinta tejida.
+   Al hacer clic en una etapa se despliegan sus hitos debajo. */
+let scActiveEtapa = -1;
+
 function renderSc() {
-    const container = document.getElementById('sc-nodes');
-    if (!container) return;
-    container.innerHTML = '';
+    const nodesEl = document.getElementById('sc-zig-nodes');
+    if (!nodesEl) return;
+    nodesEl.innerHTML = '';
 
-    const flat = flattenScHitos();
-
-    flat.forEach((entry, gi) => {
-        const { etapa, ei, hito, hi } = entry;
-        const svgIcon  = SC_ICONS[gi % SC_ICONS.length];
-        const iconHtml = hito.icon
-            ? `<img class="sc-node__icon-img" src="${hito.icon}" alt="" loading="lazy">`
-            : `<span class="sc-node__icon">${svgIcon}</span>`;
-
-        /*
-         * Zigzag puro: nodos pares (0,2,4…) arriba, impares (1,3,5…) abajo.
-         * Arriba = etiqueta arriba + icono abajo (sc-node--up)
-         * Abajo  = icono arriba + etiqueta abajo (sc-node--down)
-         */
-        const posClass = gi % 2 === 0 ? 'sc-node--up' : 'sc-node--down';
+    scData.forEach((etapa, ei) => {
+        const posClass = ei % 2 === 0 ? 'sc-zig-node--up' : 'sc-zig-node--down';
 
         const node = document.createElement('div');
-        node.className = `sc-node sc-stage--${etapa.etapa} ${posClass}`;
+        node.className = `sc-zig-node sc-stage--${etapa.etapa} ${posClass} reveal`;
         node.setAttribute('role', 'listitem');
-        node.style.setProperty('--sc-stagger', `${Math.min(gi * 60, 700)}ms`);
-        if (reduced) node.classList.add('reveal');
+        node.style.setProperty('--sc-stagger', `${Math.min(ei * 120, 600)}ms`);
 
         node.innerHTML = `
-            <span class="sc-node__label">
-                <span class="sc-node__year">${esc(hito.year)}</span>
-                <span class="sc-node__title">${esc(hito.title)}</span>
-            </span>
-            <button class="sc-node__dot" data-etapa="${ei}" data-hito="${hi}"
-                    aria-label="${esc(hito.year)}: ${esc(hito.title)}. Ver detalle.">
-                ${iconHtml}
-            </button>`;
+            <button class="sc-zig-node__btn" data-etapa="${ei}"
+                    aria-expanded="false" aria-controls="sc-etapa-detail"
+                    aria-label="Etapa ${etapa.etapa}, ${esc(etapa.year)}: ${esc(etapa.title)}">
+                <span class="sc-zig-node__num">${etapa.etapa}</span>
+            </button>
+            <span class="sc-zig-node__label">
+                <span class="sc-zig-node__kicker">Etapa ${etapa.etapa} · ${esc(etapa.year)}</span>
+                <span class="sc-zig-node__title">${esc(etapa.title)}</span>
+            </span>`;
 
-        container.appendChild(node);
+        nodesEl.appendChild(node);
     });
 
-    /* Click en nodos */
-    container.querySelectorAll('.sc-node__dot').forEach(btn => {
+    /* Click en cada etapa (todo el nodo) */
+    nodesEl.querySelectorAll('.sc-zig-node').forEach(node => {
+        const btn = node.querySelector('.sc-zig-node__btn');
+        const ei  = parseInt(btn.dataset.etapa);
+        node.querySelector('.sc-zig-node__label')?.addEventListener('click', () => selectScEtapa(ei));
+        btn.addEventListener('click', () => selectScEtapa(ei));
+    });
+
+    setupScModal();
+
+    /* Hitos ocultos por defecto: no se abre ninguna etapa al inicio */
+}
+
+/* Mostrar/ocultar los hitos de una etapa en el panel inferior */
+function selectScEtapa(ei) {
+    const etapa  = scData[ei];
+    const detail = document.getElementById('sc-etapa-detail');
+    if (!etapa || !detail) return;
+
+    /* Si se vuelve a hacer clic en la etapa activa, se cierra */
+    if (scActiveEtapa === ei) {
+        scActiveEtapa = -1;
+        detail.hidden = true;
+        document.querySelectorAll('.sc-zig-node').forEach(n => {
+            n.classList.remove('active');
+            n.querySelector('.sc-zig-node__btn')?.setAttribute('aria-expanded', 'false');
+        });
+        return;
+    }
+
+    scActiveEtapa = ei;
+
+    /* Marcar el nodo activo */
+    document.querySelectorAll('.sc-zig-node').forEach((n, i) => {
+        n.classList.toggle('active', i === ei);
+        const btn = n.querySelector('.sc-zig-node__btn');
+        if (btn) btn.setAttribute('aria-expanded', i === ei ? 'true' : 'false');
+    });
+
+    /* Tarjetas de hito */
+    const hitosHtml = etapa.hitos.map((hito, hi) => {
+        const iconHtml = hito.icon
+            ? `<img class="sc-hito__icon-img" src="${hito.icon}" alt="" loading="lazy">`
+            : '';
+        return `
+            <button class="sc-hito sc-hito--${hito.variant || 'teal'}"
+                    style="--i:${hi}"
+                    data-etapa="${ei}" data-hito="${hi}"
+                    aria-label="${esc(hito.year)}: ${esc(hito.title)}. Ver detalle.">
+                <span class="sc-hito__icon">${iconHtml}</span>
+                <span class="sc-hito__text">
+                    <span class="sc-hito__year">${esc(hito.year)}</span>
+                    <span class="sc-hito__title">${esc(hito.title)}</span>
+                </span>
+            </button>`;
+    }).join('');
+
+    detail.className = `sc-etapa-detail sc-stage--${etapa.etapa}`;
+    detail.innerHTML = `
+        <div class="sc-etapa-detail__head">
+            <span class="sc-etapa-detail__kicker">Etapa ${etapa.etapa} · ${esc(etapa.year)}</span>
+            <h3 class="sc-etapa-detail__title">${esc(etapa.title)}</h3>
+            <p class="sc-etapa-detail__intro">${esc(etapa.intro || '')}</p>
+        </div>
+        <div class="sc-etapa-detail__hitos">${hitosHtml}</div>`;
+    detail.hidden = false;
+
+    /* Click en cada hito abre el modal */
+    detail.querySelectorAll('.sc-hito').forEach(btn => {
         btn.addEventListener('click', () => {
             openScModal(parseInt(btn.dataset.etapa), parseInt(btn.dataset.hito));
         });
     });
-
-    setupScNav();
-    setupScObserver();
-    setupScModal();
-}
-
-function setupScNav() {
-    const scroll  = document.getElementById('sc-scroll');
-    const btnPrev = document.getElementById('sc-prev');
-    const btnNext = document.getElementById('sc-next');
-    if (!scroll || !btnPrev || !btnNext) return;
-    const STEP = 460;
-    btnNext.onclick = () => scroll.scrollBy({ left:  STEP, behavior: 'smooth' });
-    btnPrev.onclick = () => scroll.scrollBy({ left: -STEP, behavior: 'smooth' });
-}
-
-function setupScObserver() {
-    if (scObserver) scObserver.disconnect();
-    if (reduced) {
-        document.querySelectorAll('.sc-node').forEach(c => c.classList.add('reveal'));
-        return;
-    }
-    const scrollRoot = document.getElementById('sc-scroll');
-    scObserver = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-            if (e.isIntersecting) { e.target.classList.add('reveal'); scObserver.unobserve(e.target); }
-        });
-    }, { root: scrollRoot, threshold: 0.1, rootMargin: '0px 40px 0px 40px' });
-
-    document.querySelectorAll('.sc-node:not(.reveal)').forEach(c => scObserver.observe(c));
 }
 
 /* Hito actualmente abierto (para el retorno de foco al cerrar el modal) */
@@ -519,14 +547,64 @@ function setupScModal() {
 /* Navegar al hito anterior (-1) o siguiente (+1) sin cerrar el modal */
 function scModalNav(dir) {
     const flat = flattenScHitos();
+    const curr = flat[scFlatIndex];
     const next = scFlatIndex + dir;
     if (next < 0 || next >= flat.length) return;
     const entry = flat[next];
-    openScModal(entry.ei, entry.hi);
+
+    /* ¿Cambia de etapa? Mostrar pantalla de transición antes del hito */
+    if (curr && entry.ei !== curr.ei && !reduced) {
+        showStageSplash(entry.ei, () => openScModal(entry.ei, entry.hi, dir));
+    } else {
+        openScModal(entry.ei, entry.hi, dir);
+    }
 }
 
-/* Modal de HITO: descripción completa de un hito */
-function openScModal(etapaIdx, hitoIdx) {
+/* Pantalla breve que anuncia la nueva etapa, luego ejecuta el callback */
+function showStageSplash(etapaIdx, done) {
+    const etapa  = scData[etapaIdx];
+    const splash = document.getElementById('sc-stage-splash');
+    const panel  = document.getElementById('sc-modal-panel');
+    if (!etapa || !splash) { done(); return; }
+
+    /* El color del splash coincide con la primera variante de la etapa */
+    if (panel) panel.dataset.variant = etapa.hitos[0]?.variant || 'teal';
+
+    document.getElementById('sc-stage-splash-num').textContent    = etapa.etapa;
+    document.getElementById('sc-stage-splash-kicker').textContent = 'Etapa ' + etapa.etapa;
+    document.getElementById('sc-stage-splash-title').textContent  = etapa.title;
+    document.getElementById('sc-stage-splash-years').textContent  = etapa.year;
+
+    splash.hidden = false;
+    splash.classList.remove('out');
+    void splash.offsetWidth;
+    splash.classList.add('in');
+
+    /* Función para cerrar el splash y mostrar el hito */
+    const finish = () => {
+        if (splash.hidden) return;
+        window.clearTimeout(showStageSplash._t);
+        splash.classList.remove('in');
+        splash.classList.add('out');
+        window.setTimeout(() => {
+            splash.hidden = true;
+            splash.classList.remove('out');
+            done();
+        }, 420);
+    };
+
+    /* Botón "Saltar" para no esperar los 5 s */
+    const skip = document.getElementById('sc-stage-splash-skip');
+    if (skip) skip.onclick = finish;
+
+    /* Auto-cierre tras 3 segundos */
+    window.clearTimeout(showStageSplash._t);
+    showStageSplash._t = window.setTimeout(finish, 3000);
+}
+
+/* Modal de HITO: descripción completa de un hito.
+   `dir` (opcional): +1 siguiente, -1 anterior, para animar la transición. */
+function openScModal(etapaIdx, hitoIdx, dir) {
     const etapa = scData[etapaIdx];
     const hito  = etapa?.hitos[hitoIdx];
     const modal = document.getElementById('sc-modal');
@@ -538,11 +616,19 @@ function openScModal(etapaIdx, hitoIdx) {
 
     /* Recordar el nodo que abrió el modal para devolverle el foco al cerrar */
     scLastTrigger = document.querySelector(
-        `.sc-node__dot[data-etapa="${etapaIdx}"][data-hito="${hitoIdx}"]`);
+        `.sc-hito[data-etapa="${etapaIdx}"][data-hito="${hitoIdx}"]`);
 
     /* Variante de color del póster (teal / green / orange) */
     const panel = document.getElementById('sc-modal-panel');
     if (panel) panel.dataset.variant = hito.variant || 'teal';
+
+    /* Animación de transición al navegar entre hitos */
+    const content = document.getElementById('sc-modal-content') || panel;
+    if (content && dir && !reduced) {
+        content.classList.remove('sc-anim-next', 'sc-anim-prev');
+        void content.offsetWidth;   /* reinicia la animación */
+        content.classList.add(dir > 0 ? 'sc-anim-next' : 'sc-anim-prev');
+    }
 
     document.getElementById('sc-modal-img').src           = hito.icon || etapa.image || '';
     document.getElementById('sc-modal-img').alt           = hito.title;

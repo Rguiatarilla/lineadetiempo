@@ -189,36 +189,27 @@
          id="panel-sc" role="tabpanel"
          aria-labelledby="tab-sc" hidden>
 
-        <div class="panel-hero panel-hero--sc">
-            <p class="panel-hero__eyebrow">Salud Colectiva · Medicina Social</p>
-            <h2 class="panel-hero__title panel-hero__title--sc">
-                Evolución de la <em>Salud Colectiva</em>
-            </h2>
-            <p class="panel-hero__sub">
-                Desarrollo de la Medicina Social y la Salud Colectiva
-                en América Latina y Colombia
-            </p>
-        </div>
-
-        <!-- Línea de tiempo SC: dos filas, etapas 1+2 arriba, etapa 3 abajo -->
+        <!-- Línea de tiempo SC -->
         <div class="sc-wrapper">
-            <div class="sc-scroll" id="sc-scroll">
-                <div class="sc-stage-track" id="sc-track">
-                    <!-- Ilustración de fondo (cinta tejida tipo collage) -->
-                    <div class="sc-bg" aria-hidden="true"></div>
-                    <!-- Fila única: todos los hitos en secuencia horizontal -->
-                    <div class="sc-nodes" id="sc-nodes" role="list"></div>
+            <!-- Línea de tiempo: título sobre la zona blanca + imagen + etapas -->
+            <div class="sc-zig" id="sc-zig">
+                <div class="sc-zig__hero">
+                    <p class="panel-hero__eyebrow">Salud Colectiva · Medicina Social</p>
+                    <h2 class="panel-hero__title panel-hero__title--sc">
+                        Evolución de la <em>Salud Colectiva</em>
+                    </h2>
+                    <p class="panel-hero__sub">
+                        Desarrollo de la Medicina Social y la Salud Colectiva
+                        en América Latina y Colombia
+                    </p>
                 </div>
+                <img src="assets/images/linea-de-tiempo-salud-colectiva (1).jpg"
+                     alt="Ilustración de la línea de tiempo de la Salud Colectiva"
+                     class="sc-zig__img" loading="lazy">
+                <div class="sc-zig__nodes" id="sc-zig-nodes" role="list"></div>
             </div>
-            <!-- Flechas de navegación -->
-            <button class="sc-nav sc-nav--prev" id="sc-prev" aria-label="Anterior">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                     stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-            </button>
-            <button class="sc-nav sc-nav--next" id="sc-next" aria-label="Siguiente">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                     stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-            </button>
+            <!-- Panel de hitos de la etapa seleccionada: se inyecta por JS -->
+            <div class="sc-etapa-detail" id="sc-etapa-detail" hidden></div>
         </div>
 
         <!-- Modal de detalle de un hito SC — estilo tarjeta póster textil -->
@@ -226,6 +217,22 @@
              aria-modal="true" aria-labelledby="sc-modal-title" hidden>
             <div class="sc-modal__backdrop" id="sc-modal-backdrop"></div>
             <div class="sc-modal__panel" id="sc-modal-panel" data-variant="teal">
+                <!-- Interstitial de cambio de etapa -->
+                <div class="sc-stage-splash" id="sc-stage-splash" hidden>
+                    <span class="sc-stage-splash__glow" aria-hidden="true"></span>
+                    <span class="sc-stage-splash__badge">Nueva etapa</span>
+                    <span class="sc-stage-splash__numwrap">
+                        <span class="sc-stage-splash__ring" aria-hidden="true"></span>
+                        <span class="sc-stage-splash__num" id="sc-stage-splash-num"></span>
+                    </span>
+                    <span class="sc-stage-splash__kicker" id="sc-stage-splash-kicker"></span>
+                    <span class="sc-stage-splash__title" id="sc-stage-splash-title"></span>
+                    <span class="sc-stage-splash__years" id="sc-stage-splash-years"></span>
+                    <button class="sc-stage-splash__skip" id="sc-stage-splash-skip" type="button">
+                        Continuar →
+                    </button>
+                    <span class="sc-stage-splash__bar" aria-hidden="true"></span>
+                </div>
                 <button class="sc-modal__close" id="sc-modal-close" aria-label="Cerrar">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                          stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
@@ -234,35 +241,34 @@
                     </svg>
                 </button>
 
-                <!-- Icono circular superior -->
-                <div class="sc-modal__avatar">
-                    <img id="sc-modal-img" src="" alt="" class="sc-modal__avatar-img">
+                <!-- Contenido animado al navegar entre hitos (layout horizontal) -->
+                <div class="sc-modal__content" id="sc-modal-content">
+                    <!-- Columna izquierda: icono + etapa -->
+                    <div class="sc-modal__left">
+                        <div class="sc-modal__avatar">
+                            <img id="sc-modal-img" src="" alt="" class="sc-modal__avatar-img">
+                        </div>
+                        <span class="sc-modal__etapa-badge" id="sc-modal-etapa"></span>
+                    </div>
+
+                    <!-- Columna derecha: título, año, descripción, enlace -->
+                    <div class="sc-modal__right">
+                        <h3 class="sc-modal__title" id="sc-modal-title"></h3>
+                        <span class="sc-modal__year" id="sc-modal-year"></span>
+                        <p class="sc-modal__desc" id="sc-modal-desc"></p>
+                        <a class="sc-modal__link" id="sc-modal-link"
+                           target="_blank" rel="noopener noreferrer" hidden>
+                            Más información
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2.5"
+                                 stroke-linecap="round" aria-hidden="true">
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <line x1="10" y1="14" x2="21" y2="3"></line>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
-
-                <!-- Badge de etapa + año -->
-                <span class="sc-modal__etapa-badge" id="sc-modal-etapa"></span>
-
-                <!-- Título en mayúsculas -->
-                <h3 class="sc-modal__title" id="sc-modal-title"></h3>
-
-                <!-- Año del hito -->
-                <span class="sc-modal__year" id="sc-modal-year"></span>
-
-                <!-- Descripción justificada -->
-                <p class="sc-modal__desc" id="sc-modal-desc"></p>
-
-                <!-- Enlace -->
-                <a class="sc-modal__link" id="sc-modal-link"
-                   target="_blank" rel="noopener noreferrer" hidden>
-                    Más información
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2.5"
-                         stroke-linecap="round" aria-hidden="true">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                        <polyline points="15 3 21 3 21 9"></polyline>
-                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                    </svg>
-                </a>
 
                 <!-- Navegación entre hitos -->
                 <div class="sc-modal__nav">
