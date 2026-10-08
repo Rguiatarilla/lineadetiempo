@@ -195,7 +195,7 @@ const scData = [
                 year: "1975",
                 title: "Tesis 'O Dilema Preventivista' (Sergio Arouca)",
                 variant: "orange",
-                icon: "assets/images/Area-evaluacion.png",
+                icon: "assets/images/escuela-salud-publica.png",
                 description: "Sergio Arouca cuestionó los límites de la medicina preventiva por su enfoque liberal e individual, abriendo paso hacia la Medicina Social Latinoamericana y la Salud Colectiva.",
                 link: "https://books.scielo.org/id/q7gtd"
             }
@@ -271,7 +271,7 @@ const scData = [
                 year: "1993",
                 title: "Área de Evaluación CAPES en Saúde Coletiva",
                 variant: "orange",
-                icon: "assets/images/Area-evaluacion.png",
+                icon: "assets/images/Seminarios-ciencias-sociales.png",
                 description: "Creación del área formal por la CAPES, consolidando la Salud Colectiva como campo de conocimiento e investigación propio.",
                 link: "https://abrasco.org.br/sobre-a-abrasco/historia-e-memoria/"
             },
