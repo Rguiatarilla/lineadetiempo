@@ -1,8 +1,7 @@
-/**
- * app.js  v6
- * APS  → infografía horizontal tipo "Un viaje por la historia"
- * SC   → 3 tarjetas de etapa (con rango de años) + modal por hito
- * Depende de js/data.js (apsData, scData)
+﻿/**
+ * app.js — Línea de tiempo de Atención Primaria en Salud
+ * APS → infografía horizontal tipo "Un viaje por la historia"
+ * Depende de js/data.js (apsData)
  */
 'use strict';
 
@@ -10,43 +9,33 @@ const ANIM = { step:80, max:480, thresh:0.10, margin:'0px 0px -40px 0px' };
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ════════════════════════════════════════════════════════════
-   PESTAÑAS
-   ════════════════════════════════════════════════════════════ */
-function initTabs() {
-    document.querySelectorAll('.tab').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const target = btn.dataset.tab;
-
-            document.querySelectorAll('.tab').forEach(b => {
-                b.classList.remove('active');
-                b.setAttribute('aria-selected', 'false');
-            });
-            btn.classList.add('active');
-            btn.setAttribute('aria-selected', 'true');
-
-            document.querySelectorAll('.tab-panel').forEach(p => {
-                p.classList.remove('active');
-                p.hidden = true;
-            });
-            const panel = document.getElementById(`panel-${target}`);
-            panel.hidden = false;
-            panel.classList.add('active');
-
-            if (target === 'aps' && !panel.dataset.init) {
-                renderAps();
-                panel.dataset.init = '1';
-                /* Revelar los nodos visibles de inmediato al cambiar de pestaña */
-                setTimeout(() => setupApsObserver(), 50);
-            }
-            if (target === 'sc'  && !panel.dataset.init) { renderSc();  panel.dataset.init = '1'; }
-        });
-    });
-}
-
-/* ════════════════════════════════════════════════════════════
    APS — INFOGRAFÍA HORIZONTAL (Un viaje por la historia)
    ════════════════════════════════════════════════════════════ */
 let apsModalIdx = -1;
+
+/* Iconos SVG temáticos por etapa de APS (línea, color heredado) */
+const APS_ICONS = {
+    /* 1 · 1920 Informe Dawson → documento/informe */
+    1: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/><path d="M9 12h6M9 16h6M9 8h2"/></svg>`,
+    /* 2 · 1978 Alma-Ata → declaración mundial / globo con cinta */
+    2: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"/></svg>`,
+    /* 3 · 1986 Carta de Ottawa → promoción / hoja-corazón */
+    3: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 4 13c0-5 4-9 7-10 3 1 7 5 7 10a7 7 0 0 1-7 7z"/><path d="M11 20v-9"/></svg>`,
+    /* 4 · 1993 Ley 100 → sistema/ley (edificio + balanza) */
+    4: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V9l8-5 8 5v12"/><path d="M4 21h16"/><path d="M10 21v-5h4v5"/><path d="M9 11h.01M15 11h.01"/></svg>`,
+    /* 5 · 2008 Informe OMS → agenda mundial / globo con lupa */
+    5: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M11 4a11 11 0 0 1 0 14M4 11h14"/><path d="m20 20-3-3"/></svg>`,
+    /* 6 · 2011 Ley 1438 → comunidad / personas */
+    6: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="2.6"/><circle cx="16.5" cy="9" r="2.1"/><path d="M4 19c0-2.8 2.2-4.6 5-4.6s5 1.8 5 4.6"/><path d="M14.5 19c0-2 1-3.3 3-3.3s3 1.3 3 3.3"/></svg>`,
+    /* 7 · 2015 Ley Estatutaria → derecho / balanza */
+    7: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 21h10"/><path d="M5 7h14"/><path d="M5 7 2.5 12a2.5 2.5 0 0 0 5 0z"/><path d="M19 7l-2.5 5a2.5 2.5 0 0 0 5 0z"/></svg>`,
+    /* 8 · 2016-2018 PAIS/RIAS/Astaná → rutas de atención */
+    8: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h6a4 4 0 0 0 0-8H9a4 4 0 0 1 0-8h7"/></svg>`,
+    /* 9 · 2022-2024 Plan Decenal → equipos básicos de salud (maletín médico) */
+    9: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M12 11v4M10 13h4"/></svg>`,
+    /* 10 · 2025-2026 Consolidación en territorio → ubicación/territorio */
+    10:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>`,
+};
 
 function renderAps() {
     const labelsTop = document.getElementById('aps-labels-top');
@@ -78,11 +67,12 @@ function renderAps() {
         node.className = 'aps-node';
         node.style.setProperty('--aps-stagger', `${delay}ms`);
         node.setAttribute('role', 'listitem');
+        const apsIcon = APS_ICONS[item.etapa] || '';
         node.innerHTML = `
             <button class="aps-node__circle"
                     aria-label="Etapa ${item.etapa}: ${item.title}. Haz clic para ver más."
                     data-idx="${i}">
-                <img src="${item.image}" alt="${esc(item.title)}" loading="lazy">
+                <span class="aps-node__icon">${apsIcon}</span>
                 <span class="aps-node__num">${item.etapa}</span>
             </button>`;
         node.querySelector('.aps-node__circle').addEventListener('click', () => openApsModal(i));
@@ -256,77 +246,89 @@ function setupApsModal() {
     document.getElementById('aps-modal-backdrop')?.addEventListener('click', closeApsModal);
     document.getElementById('aps-modal-close')?.addEventListener('click',    closeApsModal);
     document.getElementById('aps-modal-back')?.addEventListener('click',     closeApsModal);
+    document.getElementById('aps-modal-prev')?.addEventListener('click', () => apsModalNav(-1));
+    document.getElementById('aps-modal-next')?.addEventListener('click', () => apsModalNav(+1));
     document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && !document.getElementById('aps-modal')?.hidden) closeApsModal();
+        if (document.getElementById('aps-modal')?.hidden) return;
+        if (e.key === 'Escape') closeApsModal();
+        if (e.key === 'ArrowLeft')  apsModalNav(-1);
+        if (e.key === 'ArrowRight') apsModalNav(+1);
     });
+}
+
+/* Navegar a la etapa anterior (-1) o siguiente (+1) sin cerrar el modal */
+function apsModalNav(dir) {
+    const next = apsModalIdx + dir;
+    if (next < 0 || next >= apsData.length) return;
+    openApsModal(next, dir);
 }
 
 /* Conceptos clave por etapa (iconos circulares debajo del texto) */
 const APS_CONCEPTS = {
     1: [
-        {icon:'🗺️', name:'Organización de servicios'},
-        {icon:'🏥', name:'Niveles de atención'},
-        {icon:'👥', name:'Acceso a la población'},
+        {icon:'🗺️', name:'Organización de servicios', desc:'Ordenar los servicios de salud en una red coordinada para que funcionen de manera articulada.'},
+        {icon:'🏥', name:'Niveles de atención', desc:'Clasificar la atención según su complejidad, desde lo básico y cercano hasta lo especializado.'},
+        {icon:'👥', name:'Acceso a la población', desc:'Acercar los servicios de salud a las personas según sus necesidades reales.'},
     ],
     2: [
-        {icon:'💊', name:'Promoción de la salud'},
-        {icon:'🛡️', name:'Prevención de la enfermedad'},
-        {icon:'🤝', name:'Participación comunitaria'},
-        {icon:'🏠', name:'Atención cercana y accesible'},
-        {icon:'⚖️', name:'Equidad en salud'},
-        {icon:'👨‍👩‍👧', name:'Participación de personas, familias y comunidades'},
+        {icon:'💊', name:'Promoción de la salud', desc:'Fomentar hábitos y condiciones que mantengan sanas a las personas, no solo tratar enfermedades.'},
+        {icon:'🛡️', name:'Prevención de la enfermedad', desc:'Actuar antes de que aparezca la enfermedad para evitar o reducir sus riesgos.'},
+        {icon:'🤝', name:'Participación comunitaria', desc:'Involucrar a la comunidad en las decisiones y el cuidado de su propia salud.'},
+        {icon:'🏠', name:'Atención cercana y accesible', desc:'Llevar la atención al entorno de las personas, fácil de alcanzar y usar.'},
+        {icon:'⚖️', name:'Equidad en salud', desc:'Dar a cada persona lo que necesita para tener las mismas oportunidades de salud.'},
+        {icon:'👨‍👩‍👧', name:'Personas, familias y comunidades', desc:'Entender la salud desde las personas, sus familias y sus comunidades.'},
     ],
     3: [
-        {icon:'🌱', name:'Promoción del bienestar'},
-        {icon:'🏘️', name:'Entornos saludables'},
-        {icon:'📣', name:'Empoderamiento comunitario'},
-        {icon:'🤲', name:'Participación activa'},
+        {icon:'🌱', name:'Promoción del bienestar', desc:'Impulsar condiciones de vida que favorezcan una mejor calidad de vida.'},
+        {icon:'🏘️', name:'Entornos saludables', desc:'Crear espacios (hogar, trabajo, barrio) que protejan y mejoren la salud.'},
+        {icon:'📣', name:'Empoderamiento comunitario', desc:'Dar a la comunidad voz y capacidad para decidir sobre su salud.'},
+        {icon:'🤲', name:'Participación activa', desc:'La comunidad no solo recibe, también actúa en el cuidado de la salud.'},
     ],
     4: [
-        {icon:'💼', name:'Financiación del sistema'},
-        {icon:'🏥', name:'Acceso a servicios'},
-        {icon:'📋', name:'Organización del sistema'},
-        {icon:'🔄', name:'Transformación del modelo'},
+        {icon:'💼', name:'Financiación del sistema', desc:'Definir cómo se paga y sostiene económicamente el sistema de salud.'},
+        {icon:'🏥', name:'Acceso a servicios', desc:'Garantizar que las personas puedan usar los servicios cuando los necesiten.'},
+        {icon:'📋', name:'Organización del sistema', desc:'Reorganizar cómo se administran y prestan los servicios de salud.'},
+        {icon:'🔄', name:'Transformación del modelo', desc:'Cambiar la forma en que se entiende y entrega la salud en el país.'},
     ],
     5: [
-        {icon:'⚖️', name:'Equidad en salud'},
-        {icon:'🌍', name:'Sistemas integrales'},
-        {icon:'👤', name:'Centrado en personas'},
-        {icon:'📈', name:'Reducción de desigualdades'},
+        {icon:'⚖️', name:'Equidad en salud', desc:'Reducir las diferencias injustas en el acceso y los resultados de salud.'},
+        {icon:'🌍', name:'Sistemas integrales', desc:'Construir sistemas que atiendan a la persona de forma completa y continua.'},
+        {icon:'👤', name:'Centrado en personas', desc:'Poner a las personas y sus necesidades en el centro de la atención.'},
+        {icon:'📈', name:'Reducción de desigualdades', desc:'Cerrar las brechas de salud entre distintos grupos de población.'},
     ],
     6: [
-        {icon:'🏘️', name:'Atención integral'},
-        {icon:'🤝', name:'Participación comunitaria'},
-        {icon:'🔗', name:'Acción intersectorial'},
-        {icon:'📍', name:'Enfoque territorial'},
+        {icon:'🏘️', name:'Atención integral', desc:'Atender la salud de manera completa, en todas las etapas de la vida.'},
+        {icon:'🤝', name:'Participación comunitaria', desc:'La comunidad participa en la planeación y el cuidado de su salud.'},
+        {icon:'🔗', name:'Acción intersectorial', desc:'Trabajar entre varios sectores (salud, educación, ambiente) por el bienestar.'},
+        {icon:'📍', name:'Enfoque territorial', desc:'Adaptar la salud a las características y necesidades de cada territorio.'},
     ],
     7: [
-        {icon:'⚖️', name:'Derecho fundamental'},
-        {icon:'🏃', name:'Atención oportuna'},
-        {icon:'✅', name:'Atención eficaz'},
-        {icon:'💚', name:'Atención de calidad'},
+        {icon:'⚖️', name:'Derecho fundamental', desc:'La salud se reconoce como un derecho autónomo e irrenunciable de todos.'},
+        {icon:'🏃', name:'Atención oportuna', desc:'Recibir la atención en el momento adecuado, sin demoras que la perjudiquen.'},
+        {icon:'✅', name:'Atención eficaz', desc:'Que la atención realmente resuelva y responda a los problemas de salud.'},
+        {icon:'💚', name:'Atención de calidad', desc:'Servicios seguros, dignos y centrados en el bienestar de la persona.'},
     ],
     8: [
-        {icon:'🛤️', name:'Rutas de atención'},
-        {icon:'🌐', name:'Compromiso global'},
-        {icon:'🏥', name:'Atención accesible'},
-        {icon:'🔄', name:'Atención sostenible'},
+        {icon:'🛤️', name:'Rutas de atención', desc:'Caminos claros que organizan la promoción, prevención, atención y cuidado.'},
+        {icon:'🌐', name:'Compromiso global', desc:'Astaná reafirma a nivel mundial el compromiso con la Atención Primaria.'},
+        {icon:'🏥', name:'Atención accesible', desc:'Servicios al alcance de todas las personas, sin barreras.'},
+        {icon:'🔄', name:'Atención sostenible', desc:'Un modelo que se puede mantener en el tiempo de forma estable.'},
     ],
     9: [
-        {icon:'🏘️', name:'Trabajo territorial'},
-        {icon:'👨‍⚕️', name:'Equipos Básicos de Salud'},
-        {icon:'📊', name:'Equidad y bienestar'},
-        {icon:'🛡️', name:'Prevención'},
+        {icon:'🏘️', name:'Trabajo territorial', desc:'Llevar las acciones de salud directamente a cada territorio y comunidad.'},
+        {icon:'👨‍⚕️', name:'Equipos Básicos de Salud', desc:'Equipos que acercan el cuidado a los hogares y zonas con más necesidades.'},
+        {icon:'📊', name:'Equidad y bienestar', desc:'Orientar las acciones hacia la equidad y el bienestar de la población.'},
+        {icon:'🛡️', name:'Prevención', desc:'Priorizar la promoción de la salud y la prevención de la enfermedad.'},
     ],
     10: [
-        {icon:'👣', name:'Fortalecimiento continuo'},
-        {icon:'🤝', name:'Participación comunitaria'},
-        {icon:'💚', name:'Atención integral'},
-        {icon:'📍', name:'Acercamiento al territorio'},
+        {icon:'👣', name:'Fortalecimiento continuo', desc:'La APS se refuerza día a día para construir salud junto a las comunidades.'},
+        {icon:'🤝', name:'Participación comunitaria', desc:'Las comunidades siguen siendo protagonistas en el cuidado de su salud.'},
+        {icon:'💚', name:'Atención integral', desc:'Cuidado completo de promoción, prevención y atención en cada etapa de la vida.'},
+        {icon:'📍', name:'Acercamiento al territorio', desc:'Los equipos llevan el cuidado directamente a los hogares y territorios.'},
     ],
 };
 
-function openApsModal(index) {
+function openApsModal(index, dir) {
     const item  = apsData[index];
     const modal = document.getElementById('aps-modal');
     if (!modal) return;
@@ -349,14 +351,66 @@ function openApsModal(index) {
     if (item.link) { linkEl.href = item.link; linkEl.hidden = false; }
     else           { linkEl.hidden = true; }
 
-    /* Iconos de conceptos */
+    /* Iconos de conceptos (clicables, muestran una pequeña descripción) */
     const iconsRow = document.getElementById('aps-modal-icons');
     const concepts = APS_CONCEPTS[item.etapa] || [];
-    iconsRow.innerHTML = concepts.map(c => `
-        <div class="aps-modal__concept">
+    iconsRow.innerHTML = concepts.map((c, ci) => `
+        <button type="button" class="aps-modal__concept" data-ci="${ci}"
+                aria-expanded="false" aria-controls="aps-concept-info">
             <div class="aps-modal__concept-icon">${c.icon}</div>
-            <span class="aps-modal__concept-name">${c.name}</span>
-        </div>`).join('');
+            <span class="aps-modal__concept-name">${esc(c.name)}</span>
+            <span class="aps-modal__concept-hint" aria-hidden="true">ⓘ</span>
+        </button>`).join('')
+        + `<div class="aps-modal__concept-info" id="aps-concept-info" hidden></div>`;
+
+    /* Click en cada concepto: muestra/oculta su descripción */
+    const infoBox = iconsRow.querySelector('.aps-modal__concept-info');
+    iconsRow.querySelectorAll('.aps-modal__concept').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const ci = parseInt(btn.dataset.ci);
+            const c  = concepts[ci];
+            const alreadyActive = btn.classList.contains('active');
+
+            iconsRow.querySelectorAll('.aps-modal__concept').forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-expanded', 'false');
+            });
+
+            if (alreadyActive) {
+                infoBox.hidden = true;
+                infoBox.classList.remove('show');
+                return;
+            }
+
+            btn.classList.add('active');
+            btn.setAttribute('aria-expanded', 'true');
+            infoBox.innerHTML = `
+                <span class="aps-modal__concept-info-icon">${c.icon}</span>
+                <span class="aps-modal__concept-info-text">
+                    <strong>${esc(c.name)}</strong>
+                    ${esc(c.desc || '')}
+                </span>`;
+            infoBox.hidden = false;
+            void infoBox.offsetWidth;
+            infoBox.classList.add('show');
+        });
+    });
+
+    /* Botones de navegación + contador */
+    const btnPrev = document.getElementById('aps-modal-prev');
+    const btnNext = document.getElementById('aps-modal-next');
+    const counter = document.getElementById('aps-modal-counter');
+    if (btnPrev) btnPrev.disabled = index <= 0;
+    if (btnNext) btnNext.disabled = index >= apsData.length - 1;
+    if (counter) counter.textContent = `${index + 1} / ${apsData.length}`;
+
+    /* Animación de deslizamiento al navegar entre etapas */
+    const panel = modal.querySelector('.aps-modal__panel');
+    if (panel && dir && !reduced) {
+        panel.classList.remove('aps-anim-next', 'aps-anim-prev');
+        void panel.offsetWidth;
+        panel.classList.add(dir > 0 ? 'aps-anim-next' : 'aps-anim-prev');
+    }
 
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -377,296 +431,6 @@ function closeApsModal() {
 }
 
 /* ════════════════════════════════════════════════════════════
-   SC — ILUSTRACIÓN DE FONDO + NODOS (icono + título)
-   ════════════════════════════════════════════════════════════ */
-let scObserver = null;
-
-/* Íconos SVG de línea, uno por tipo de hito (se asignan por índice global) */
-const SC_ICONS = [
-    /* megáfono / campaña */
-    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15 8a4 4 0 0 1 0 8"/><path d="M8 18v2"/></svg>`,
-    /* personas / seminario internacional */
-    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="2.6"/><circle cx="16.5" cy="9" r="2.1"/><path d="M4 19c0-2.8 2.2-4.6 5-4.6s5 1.8 5 4.6"/><path d="M14.5 19c0-2 1-3.3 3-3.3s3 1.3 3 3.3"/></svg>`,
-    /* edificio / departamento universitario */
-    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V8l8-4 8 4v13"/><path d="M4 21h16"/><path d="M9 21v-5h6v5"/><path d="M9 11h.01M15 11h.01"/></svg>`,
-    /* mano con corazón / promotoras */
-    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-6-4-6-8a3 3 0 0 1 6-1 3 3 0 0 1 6 1c0 4-6 8-6 8z"/></svg>`,
-    /* birrete / escuela */
-    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-4 10 4-10 4z"/><path d="M6 11v4c0 1.5 2.7 2.5 6 2.5s6-1 6-2.5v-4"/><path d="M22 9v4"/></svg>`,
-    /* idea / determinación social */
-    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.3 1 2.5h6c0-1.2.3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg>`,
-    /* libros / seminario ciencias sociales */
-    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a1 1 0 0 1 1-1h5v15H5a1 1 0 0 0-1 1z"/><path d="M20 5a1 1 0 0 0-1-1h-5v15h5a1 1 0 0 1 1 1z"/></svg>`,
-    /* documento / tesis */
-    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/><path d="M9 13h6M9 17h6M9 9h2"/></svg>`,
-    /* bandera / fundación institución */
-    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>`,
-    /* red / asociación */
-    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/><path d="M12 7v4M12 11l-5.5 5M12 11l5.5 5"/></svg>`,
-    /* lazo / memoria */
-    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 11s3-2.5 3-5a3 3 0 0 0-6 0c0 2.5 3 5 3 5z"/><path d="M12 11l-4 10M12 11l4 10"/></svg>`,
-    /* balanza / derecho - constitución */
-    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 21h10"/><path d="M5 7h14"/><path d="M5 7l-2.5 5a2.5 2.5 0 0 0 5 0z"/><path d="M19 7l-2.5 5a2.5 2.5 0 0 0 5 0z"/></svg>`,
-];
-
-/* Lista plana de los hitos con su etapa e índices */
-function flattenScHitos() {
-    const flat = [];
-    scData.forEach((etapa, ei) => {
-        etapa.hitos.forEach((hito, hi) => flat.push({ etapa, ei, hito, hi }));
-    });
-    return flat;
-}
-
-/* Línea de tiempo: 4 etapas en zigzag sobre la cinta tejida.
-   Al hacer clic en una etapa se despliegan sus hitos debajo. */
-let scActiveEtapa = -1;
-
-function renderSc() {
-    const nodesEl = document.getElementById('sc-zig-nodes');
-    if (!nodesEl) return;
-    nodesEl.innerHTML = '';
-
-    scData.forEach((etapa, ei) => {
-        const posClass = ei % 2 === 0 ? 'sc-zig-node--up' : 'sc-zig-node--down';
-
-        const node = document.createElement('div');
-        node.className = `sc-zig-node sc-stage--${etapa.etapa} ${posClass} reveal`;
-        node.setAttribute('role', 'listitem');
-        node.style.setProperty('--sc-stagger', `${Math.min(ei * 120, 600)}ms`);
-
-        node.innerHTML = `
-            <button class="sc-zig-node__btn" data-etapa="${ei}"
-                    aria-expanded="false" aria-controls="sc-etapa-detail"
-                    aria-label="Etapa ${etapa.etapa}, ${esc(etapa.year)}: ${esc(etapa.title)}">
-                <span class="sc-zig-node__num">${etapa.etapa}</span>
-            </button>
-            <span class="sc-zig-node__label">
-                <span class="sc-zig-node__kicker">Etapa ${etapa.etapa} · ${esc(etapa.year)}</span>
-                <span class="sc-zig-node__title">${esc(etapa.title)}</span>
-            </span>`;
-
-        nodesEl.appendChild(node);
-    });
-
-    /* Click en cada etapa (todo el nodo) */
-    nodesEl.querySelectorAll('.sc-zig-node').forEach(node => {
-        const btn = node.querySelector('.sc-zig-node__btn');
-        const ei  = parseInt(btn.dataset.etapa);
-        node.querySelector('.sc-zig-node__label')?.addEventListener('click', () => selectScEtapa(ei));
-        btn.addEventListener('click', () => selectScEtapa(ei));
-    });
-
-    setupScModal();
-
-    /* Hitos ocultos por defecto: no se abre ninguna etapa al inicio */
-}
-
-/* Mostrar/ocultar los hitos de una etapa en el panel inferior */
-function selectScEtapa(ei) {
-    const etapa  = scData[ei];
-    const detail = document.getElementById('sc-etapa-detail');
-    if (!etapa || !detail) return;
-
-    /* Si se vuelve a hacer clic en la etapa activa, se cierra */
-    if (scActiveEtapa === ei) {
-        scActiveEtapa = -1;
-        detail.hidden = true;
-        document.querySelectorAll('.sc-zig-node').forEach(n => {
-            n.classList.remove('active');
-            n.querySelector('.sc-zig-node__btn')?.setAttribute('aria-expanded', 'false');
-        });
-        return;
-    }
-
-    scActiveEtapa = ei;
-
-    /* Marcar el nodo activo */
-    document.querySelectorAll('.sc-zig-node').forEach((n, i) => {
-        n.classList.toggle('active', i === ei);
-        const btn = n.querySelector('.sc-zig-node__btn');
-        if (btn) btn.setAttribute('aria-expanded', i === ei ? 'true' : 'false');
-    });
-
-    /* Tarjetas de hito */
-    const hitosHtml = etapa.hitos.map((hito, hi) => {
-        const iconHtml = hito.icon
-            ? `<img class="sc-hito__icon-img" src="${hito.icon}" alt="" loading="lazy">`
-            : '';
-        return `
-            <button class="sc-hito sc-hito--${hito.variant || 'teal'}"
-                    style="--i:${hi}"
-                    data-etapa="${ei}" data-hito="${hi}"
-                    aria-label="${esc(hito.year)}: ${esc(hito.title)}. Ver detalle.">
-                <span class="sc-hito__icon">${iconHtml}</span>
-                <span class="sc-hito__text">
-                    <span class="sc-hito__year">${esc(hito.year)}</span>
-                    <span class="sc-hito__title">${esc(hito.title)}</span>
-                </span>
-            </button>`;
-    }).join('');
-
-    detail.className = `sc-etapa-detail sc-stage--${etapa.etapa}`;
-    detail.innerHTML = `
-        <div class="sc-etapa-detail__head">
-            <span class="sc-etapa-detail__kicker">Etapa ${etapa.etapa} · ${esc(etapa.year)}</span>
-            <h3 class="sc-etapa-detail__title">${esc(etapa.title)}</h3>
-            <p class="sc-etapa-detail__intro">${esc(etapa.intro || '')}</p>
-        </div>
-        <div class="sc-etapa-detail__hitos">${hitosHtml}</div>`;
-    detail.hidden = false;
-
-    /* Click en cada hito abre el modal */
-    detail.querySelectorAll('.sc-hito').forEach(btn => {
-        btn.addEventListener('click', () => {
-            openScModal(parseInt(btn.dataset.etapa), parseInt(btn.dataset.hito));
-        });
-    });
-}
-
-/* Hito actualmente abierto (para el retorno de foco al cerrar el modal) */
-let scLastTrigger = null;
-
-/* ── Modal SC (detalle de hito) ───────────────────────────────── */
-let scFlatIndex = -1;   /* índice actual dentro de flattenScHitos() */
-
-function setupScModal() {
-    document.getElementById('sc-modal-backdrop')?.addEventListener('click', closeScModal);
-    document.getElementById('sc-modal-close')?.addEventListener('click',    closeScModal);
-    document.getElementById('sc-modal-prev')?.addEventListener('click', () => scModalNav(-1));
-    document.getElementById('sc-modal-next')?.addEventListener('click', () => scModalNav(+1));
-
-    document.addEventListener('keydown', e => {
-        if (document.getElementById('sc-modal')?.hidden) return;
-        if (e.key === 'Escape') closeScModal();
-        if (e.key === 'ArrowLeft')  scModalNav(-1);
-        if (e.key === 'ArrowRight') scModalNav(+1);
-    });
-}
-
-/* Navegar al hito anterior (-1) o siguiente (+1) sin cerrar el modal */
-function scModalNav(dir) {
-    const flat = flattenScHitos();
-    const curr = flat[scFlatIndex];
-    const next = scFlatIndex + dir;
-    if (next < 0 || next >= flat.length) return;
-    const entry = flat[next];
-
-    /* ¿Cambia de etapa? Mostrar pantalla de transición antes del hito */
-    if (curr && entry.ei !== curr.ei && !reduced) {
-        showStageSplash(entry.ei, () => openScModal(entry.ei, entry.hi, dir));
-    } else {
-        openScModal(entry.ei, entry.hi, dir);
-    }
-}
-
-/* Pantalla breve que anuncia la nueva etapa, luego ejecuta el callback */
-function showStageSplash(etapaIdx, done) {
-    const etapa  = scData[etapaIdx];
-    const splash = document.getElementById('sc-stage-splash');
-    const panel  = document.getElementById('sc-modal-panel');
-    if (!etapa || !splash) { done(); return; }
-
-    /* El color del splash coincide con la primera variante de la etapa */
-    if (panel) panel.dataset.variant = etapa.hitos[0]?.variant || 'teal';
-
-    document.getElementById('sc-stage-splash-num').textContent    = etapa.etapa;
-    document.getElementById('sc-stage-splash-kicker').textContent = 'Etapa ' + etapa.etapa;
-    document.getElementById('sc-stage-splash-title').textContent  = etapa.title;
-    document.getElementById('sc-stage-splash-years').textContent  = etapa.year;
-
-    splash.hidden = false;
-    splash.classList.remove('out');
-    void splash.offsetWidth;
-    splash.classList.add('in');
-
-    /* Función para cerrar el splash y mostrar el hito */
-    const finish = () => {
-        if (splash.hidden) return;
-        window.clearTimeout(showStageSplash._t);
-        splash.classList.remove('in');
-        splash.classList.add('out');
-        window.setTimeout(() => {
-            splash.hidden = true;
-            splash.classList.remove('out');
-            done();
-        }, 420);
-    };
-
-    /* Botón "Saltar" para no esperar los 5 s */
-    const skip = document.getElementById('sc-stage-splash-skip');
-    if (skip) skip.onclick = finish;
-
-    /* Auto-cierre tras 3 segundos */
-    window.clearTimeout(showStageSplash._t);
-    showStageSplash._t = window.setTimeout(finish, 3000);
-}
-
-/* Modal de HITO: descripción completa de un hito.
-   `dir` (opcional): +1 siguiente, -1 anterior, para animar la transición. */
-function openScModal(etapaIdx, hitoIdx, dir) {
-    const etapa = scData[etapaIdx];
-    const hito  = etapa?.hitos[hitoIdx];
-    const modal = document.getElementById('sc-modal');
-    if (!hito || !modal) return;
-
-    /* Calcular índice plano para la navegación */
-    const flat = flattenScHitos();
-    scFlatIndex = flat.findIndex(f => f.ei === etapaIdx && f.hi === hitoIdx);
-
-    /* Recordar el nodo que abrió el modal para devolverle el foco al cerrar */
-    scLastTrigger = document.querySelector(
-        `.sc-hito[data-etapa="${etapaIdx}"][data-hito="${hitoIdx}"]`);
-
-    /* Variante de color del póster (teal / green / orange) */
-    const panel = document.getElementById('sc-modal-panel');
-    if (panel) panel.dataset.variant = hito.variant || 'teal';
-
-    /* Animación de transición al navegar entre hitos */
-    const content = document.getElementById('sc-modal-content') || panel;
-    if (content && dir && !reduced) {
-        content.classList.remove('sc-anim-next', 'sc-anim-prev');
-        void content.offsetWidth;   /* reinicia la animación */
-        content.classList.add(dir > 0 ? 'sc-anim-next' : 'sc-anim-prev');
-    }
-
-    document.getElementById('sc-modal-img').src           = hito.icon || etapa.image || '';
-    document.getElementById('sc-modal-img').alt           = hito.title;
-    document.getElementById('sc-modal-etapa').textContent = `Etapa ${etapa.etapa} · ${etapa.year}`;
-    document.getElementById('sc-modal-year').textContent  = hito.year;
-    document.getElementById('sc-modal-title').textContent = hito.title;
-    document.getElementById('sc-modal-desc').textContent  = hito.description;
-
-    /* Nota opcional del pie (ej. "Héctor Abad Gómez") */
-    document.getElementById('sc-modal-footer').textContent = hito.footer || '';
-
-    const linkEl = document.getElementById('sc-modal-link');
-    if (hito.link) { linkEl.href = hito.link; linkEl.hidden = false; }
-    else           { linkEl.hidden = true; }
-
-    /* Actualizar botones de navegación */
-    const btnPrev = document.getElementById('sc-modal-prev');
-    const btnNext = document.getElementById('sc-modal-next');
-    const counter = document.getElementById('sc-modal-counter');
-    if (btnPrev) btnPrev.disabled = scFlatIndex <= 0;
-    if (btnNext) btnNext.disabled = scFlatIndex >= flat.length - 1;
-    if (counter) counter.textContent = `${scFlatIndex + 1} / ${flat.length}`;
-
-    modal.hidden = false;
-    document.body.style.overflow = 'hidden';
-    document.getElementById('sc-modal-close')?.focus();
-}
-
-function closeScModal() {
-    const modal = document.getElementById('sc-modal');
-    if (!modal) return;
-    modal.hidden = true;
-    document.body.style.overflow = '';
-    if (scLastTrigger) scLastTrigger.focus();
-    scLastTrigger = null;
-}
-
-/* ════════════════════════════════════════════════════════════
    HELPERS
    ════════════════════════════════════════════════════════════ */
 function esc(str) {
@@ -679,7 +443,6 @@ function esc(str) {
    INICIO
    ════════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
-    initTabs();
     renderAps();
     document.getElementById('panel-aps').dataset.init = '1';
 });
