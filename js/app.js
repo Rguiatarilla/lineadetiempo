@@ -13,28 +13,18 @@ const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
    ════════════════════════════════════════════════════════════ */
 let apsModalIdx = -1;
 
-/* Iconos SVG temáticos por etapa de APS (línea, color heredado) */
+/* Íconos de la línea de tiempo — imágenes PNG por etapa */
 const APS_ICONS = {
-    /* 1 · 1920 Informe Dawson → documento/informe */
-    1: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/><path d="M9 12h6M9 16h6M9 8h2"/></svg>`,
-    /* 2 · 1978 Alma-Ata → declaración mundial / globo con cinta */
-    2: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"/></svg>`,
-    /* 3 · 1986 Carta de Ottawa → promoción / hoja-corazón */
-    3: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 4 13c0-5 4-9 7-10 3 1 7 5 7 10a7 7 0 0 1-7 7z"/><path d="M11 20v-9"/></svg>`,
-    /* 4 · 1993 Ley 100 → sistema/ley (edificio + balanza) */
-    4: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V9l8-5 8 5v12"/><path d="M4 21h16"/><path d="M10 21v-5h4v5"/><path d="M9 11h.01M15 11h.01"/></svg>`,
-    /* 5 · 2008 Informe OMS → agenda mundial / globo con lupa */
-    5: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M11 4a11 11 0 0 1 0 14M4 11h14"/><path d="m20 20-3-3"/></svg>`,
-    /* 6 · 2011 Ley 1438 → comunidad / personas */
-    6: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="2.6"/><circle cx="16.5" cy="9" r="2.1"/><path d="M4 19c0-2.8 2.2-4.6 5-4.6s5 1.8 5 4.6"/><path d="M14.5 19c0-2 1-3.3 3-3.3s3 1.3 3 3.3"/></svg>`,
-    /* 7 · 2015 Ley Estatutaria → derecho / balanza */
-    7: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 21h10"/><path d="M5 7h14"/><path d="M5 7 2.5 12a2.5 2.5 0 0 0 5 0z"/><path d="M19 7l-2.5 5a2.5 2.5 0 0 0 5 0z"/></svg>`,
-    /* 8 · 2016-2018 PAIS/RIAS/Astaná → rutas de atención */
-    8: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h6a4 4 0 0 0 0-8H9a4 4 0 0 1 0-8h7"/></svg>`,
-    /* 9 · 2022-2024 Plan Decenal → equipos básicos de salud (maletín médico) */
-    9: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M12 11v4M10 13h4"/></svg>`,
-    /* 10 · 2025-2026 Consolidación en territorio → ubicación/territorio */
-    10:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>`,
+    1:  `<img src="assets/images/linea-etapa1.png"  alt="Etapa 1"  width="30" height="30">`,
+    2:  `<img src="assets/images/linea-etapa2.png"  alt="Etapa 2"  width="30" height="30">`,
+    3:  `<img src="assets/images/linea-etapa3.png"  alt="Etapa 3"  width="30" height="30">`,
+    4:  `<img src="assets/images/linea-etapa4.png"  alt="Etapa 4"  width="30" height="30">`,
+    5:  `<img src="assets/images/linea-etapa5.png"  alt="Etapa 5"  width="30" height="30">`,
+    6:  `<img src="assets/images/linea-etapa6.png"  alt="Etapa 6"  width="30" height="30">`,
+    7:  `<img src="assets/images/linea-etapa7.png"  alt="Etapa 7"  width="30" height="30">`,
+    8:  `<img src="assets/images/linea-etapa8.png"  alt="Etapa 8"  width="30" height="30">`,
+    9:  `<img src="assets/images/linea-etapa9.png"  alt="Etapa 9"  width="30" height="30">`,
+    10: `<img src="assets/images/linea-etapa10.png" alt="Etapa 10" width="30" height="30">`,
 };
 
 function renderAps() {
@@ -263,68 +253,68 @@ function apsModalNav(dir) {
     openApsModal(next, dir);
 }
 
-/* Conceptos clave por etapa (iconos circulares debajo del texto) */
+/* Conceptos clave por etapa — imágenes PNG */
 const APS_CONCEPTS = {
     1: [
-        {icon:'🗺️', name:'Organización de servicios', desc:'Ordenar los servicios de salud en una red coordinada para que funcionen de manera articulada.'},
-        {icon:'🏥', name:'Niveles de atención', desc:'Clasificar la atención según su complejidad, desde lo básico y cercano hasta lo especializado.'},
-        {icon:'👥', name:'Acceso a la población', desc:'Acercar los servicios de salud a las personas según sus necesidades reales.'},
+        {icon:'assets/images/concepto-etapa1-1.png', name:'Organización de servicios', desc:'Ordenar los servicios de salud en una red coordinada para que funcionen de manera articulada.'},
+        {icon:'assets/images/concepto-etapa1-2.png', name:'Niveles de atención', desc:'Clasificar la atención según su complejidad, desde lo básico y cercano hasta lo especializado.'},
+        {icon:'assets/images/concepto-etapa1-3.png', name:'Acceso a la población', desc:'Acercar los servicios de salud a las personas según sus necesidades reales.'},
     ],
     2: [
-        {icon:'💊', name:'Promoción de la salud', desc:'Fomentar hábitos y condiciones que mantengan sanas a las personas, no solo tratar enfermedades.'},
-        {icon:'🛡️', name:'Prevención de la enfermedad', desc:'Actuar antes de que aparezca la enfermedad para evitar o reducir sus riesgos.'},
-        {icon:'🤝', name:'Participación comunitaria', desc:'Involucrar a la comunidad en las decisiones y el cuidado de su propia salud.'},
-        {icon:'🏠', name:'Atención cercana y accesible', desc:'Llevar la atención al entorno de las personas, fácil de alcanzar y usar.'},
-        {icon:'⚖️', name:'Equidad en salud', desc:'Dar a cada persona lo que necesita para tener las mismas oportunidades de salud.'},
-        {icon:'👨‍👩‍👧', name:'Personas, familias y comunidades', desc:'Entender la salud desde las personas, sus familias y sus comunidades.'},
+        {icon:'assets/images/concepto-etapa2-1.png', name:'Promoción de la salud', desc:'Fomentar hábitos y condiciones que mantengan sanas a las personas, no solo tratar enfermedades.'},
+        {icon:'assets/images/concepto-etapa2-2.png', name:'Prevención de la enfermedad', desc:'Actuar antes de que aparezca la enfermedad para evitar o reducir sus riesgos.'},
+        {icon:'assets/images/concepto-etapa2-3.png', name:'Participación comunitaria', desc:'Involucrar a la comunidad en las decisiones y el cuidado de su propia salud.'},
+        {icon:'assets/images/concepto-etapa2-4.png', name:'Atención cercana y accesible', desc:'Llevar la atención al entorno de las personas, fácil de alcanzar y usar.'},
+        {icon:'assets/images/concepto-etapa2-5.png', name:'Equidad en salud', desc:'Dar a cada persona lo que necesita para tener las mismas oportunidades de salud.'},
+        {icon:'assets/images/concepto-etapa2-6.png', name:'Personas, familias y comunidades', desc:'Entender la salud desde las personas, sus familias y sus comunidades.'},
     ],
     3: [
-        {icon:'🌱', name:'Promoción del bienestar', desc:'Impulsar condiciones de vida que favorezcan una mejor calidad de vida.'},
-        {icon:'🏘️', name:'Entornos saludables', desc:'Crear espacios (hogar, trabajo, barrio) que protejan y mejoren la salud.'},
-        {icon:'📣', name:'Empoderamiento comunitario', desc:'Dar a la comunidad voz y capacidad para decidir sobre su salud.'},
-        {icon:'🤲', name:'Participación activa', desc:'La comunidad no solo recibe, también actúa en el cuidado de la salud.'},
+        {icon:'assets/images/concepto-etapa3-1.png', name:'Promoción del bienestar', desc:'Impulsar condiciones de vida que favorezcan una mejor calidad de vida.'},
+        {icon:'assets/images/concepto-etapa3-2.png', name:'Entornos saludables', desc:'Crear espacios (hogar, trabajo, barrio) que protejan y mejoren la salud.'},
+        {icon:'assets/images/concepto-etapa3-3.png', name:'Empoderamiento comunitario', desc:'Dar a la comunidad voz y capacidad para decidir sobre su salud.'},
+        {icon:'assets/images/concepto-etapa3-4.png', name:'Participación activa', desc:'La comunidad no solo recibe, también actúa en el cuidado de la salud.'},
     ],
     4: [
-        {icon:'💼', name:'Financiación del sistema', desc:'Definir cómo se paga y sostiene económicamente el sistema de salud.'},
-        {icon:'🏥', name:'Acceso a servicios', desc:'Garantizar que las personas puedan usar los servicios cuando los necesiten.'},
-        {icon:'📋', name:'Organización del sistema', desc:'Reorganizar cómo se administran y prestan los servicios de salud.'},
-        {icon:'🔄', name:'Transformación del modelo', desc:'Cambiar la forma en que se entiende y entrega la salud en el país.'},
+        {icon:'assets/images/concepto-etapa4-1.png', name:'Financiación del sistema', desc:'Definir cómo se paga y sostiene económicamente el sistema de salud.'},
+        {icon:'assets/images/concepto-etapa4-2.png', name:'Acceso a servicios', desc:'Garantizar que las personas puedan usar los servicios cuando los necesiten.'},
+        {icon:'assets/images/concepto-etapa4-3.png', name:'Organización del sistema', desc:'Reorganizar cómo se administran y prestan los servicios de salud.'},
+        {icon:'assets/images/concepto-etapa4-4.png', name:'Transformación del modelo', desc:'Cambiar la forma en que se entiende y entrega la salud en el país.'},
     ],
     5: [
-        {icon:'⚖️', name:'Equidad en salud', desc:'Reducir las diferencias injustas en el acceso y los resultados de salud.'},
-        {icon:'🌍', name:'Sistemas integrales', desc:'Construir sistemas que atiendan a la persona de forma completa y continua.'},
-        {icon:'👤', name:'Centrado en personas', desc:'Poner a las personas y sus necesidades en el centro de la atención.'},
-        {icon:'📈', name:'Reducción de desigualdades', desc:'Cerrar las brechas de salud entre distintos grupos de población.'},
+        {icon:'assets/images/concepto-etapa5-1.png', name:'Equidad en salud', desc:'Reducir las diferencias injustas en el acceso y los resultados de salud.'},
+        {icon:'assets/images/concepto-etapa5-2.png', name:'Sistemas integrales', desc:'Construir sistemas que atiendan a la persona de forma completa y continua.'},
+        {icon:'assets/images/concepto-etapa5-3.png', name:'Centrado en personas', desc:'Poner a las personas y sus necesidades en el centro de la atención.'},
+        {icon:'assets/images/concepto-etapa5-4.png', name:'Reducción de desigualdades', desc:'Cerrar las brechas de salud entre distintos grupos de población.'},
     ],
     6: [
-        {icon:'🏘️', name:'Atención integral', desc:'Atender la salud de manera completa, en todas las etapas de la vida.'},
-        {icon:'🤝', name:'Participación comunitaria', desc:'La comunidad participa en la planeación y el cuidado de su salud.'},
-        {icon:'🔗', name:'Acción intersectorial', desc:'Trabajar entre varios sectores (salud, educación, ambiente) por el bienestar.'},
-        {icon:'📍', name:'Enfoque territorial', desc:'Adaptar la salud a las características y necesidades de cada territorio.'},
+        {icon:'assets/images/concepto-etapa6-1.png', name:'Atención integral', desc:'Atender la salud de manera completa, en todas las etapas de la vida.'},
+        {icon:'assets/images/concepto-etapa6-2.png', name:'Participación comunitaria', desc:'La comunidad participa en la planeación y el cuidado de su salud.'},
+        {icon:'assets/images/concepto-etapa6-3.png', name:'Acción intersectorial', desc:'Trabajar entre varios sectores (salud, educación, ambiente) por el bienestar.'},
+        {icon:'assets/images/concepto-etapa6-4.png', name:'Enfoque territorial', desc:'Adaptar la salud a las características y necesidades de cada territorio.'},
     ],
     7: [
-        {icon:'⚖️', name:'Derecho fundamental', desc:'La salud se reconoce como un derecho autónomo e irrenunciable de todos.'},
-        {icon:'🏃', name:'Atención oportuna', desc:'Recibir la atención en el momento adecuado, sin demoras que la perjudiquen.'},
-        {icon:'✅', name:'Atención eficaz', desc:'Que la atención realmente resuelva y responda a los problemas de salud.'},
-        {icon:'💚', name:'Atención de calidad', desc:'Servicios seguros, dignos y centrados en el bienestar de la persona.'},
+        {icon:'assets/images/concepto-etapa7-1.png', name:'Derecho fundamental', desc:'La salud se reconoce como un derecho autónomo e irrenunciable de todos.'},
+        {icon:'assets/images/concepto-etapa7-2.png', name:'Atención oportuna', desc:'Recibir la atención en el momento adecuado, sin demoras que la perjudiquen.'},
+        {icon:'assets/images/concepto-etapa7-3.png', name:'Atención eficaz', desc:'Que la atención realmente resuelva y responda a los problemas de salud.'},
+        {icon:'assets/images/concepto-etapa7-4.png', name:'Atención de calidad', desc:'Servicios seguros, dignos y centrados en el bienestar de la persona.'},
     ],
     8: [
-        {icon:'🛤️', name:'Rutas de atención', desc:'Caminos claros que organizan la promoción, prevención, atención y cuidado.'},
-        {icon:'🌐', name:'Compromiso global', desc:'Astaná reafirma a nivel mundial el compromiso con la Atención Primaria.'},
-        {icon:'🏥', name:'Atención accesible', desc:'Servicios al alcance de todas las personas, sin barreras.'},
-        {icon:'🔄', name:'Atención sostenible', desc:'Un modelo que se puede mantener en el tiempo de forma estable.'},
+        {icon:'assets/images/concepto-etapa8-1.png', name:'Rutas de atención', desc:'Caminos claros que organizan la promoción, prevención, atención y cuidado.'},
+        {icon:'assets/images/concepto-etapa8-2.png', name:'Compromiso global', desc:'Astaná reafirma a nivel mundial el compromiso con la Atención Primaria.'},
+        {icon:'assets/images/concepto-etapa8-3.png', name:'Atención accesible', desc:'Servicios al alcance de todas las personas, sin barreras.'},
+        {icon:'assets/images/concepto-etapa8-4.png', name:'Atención sostenible', desc:'Un modelo que se puede mantener en el tiempo de forma estable.'},
     ],
     9: [
-        {icon:'🏘️', name:'Trabajo territorial', desc:'Llevar las acciones de salud directamente a cada territorio y comunidad.'},
-        {icon:'👨‍⚕️', name:'Equipos Básicos de Salud', desc:'Equipos que acercan el cuidado a los hogares y zonas con más necesidades.'},
-        {icon:'📊', name:'Equidad y bienestar', desc:'Orientar las acciones hacia la equidad y el bienestar de la población.'},
-        {icon:'🛡️', name:'Prevención', desc:'Priorizar la promoción de la salud y la prevención de la enfermedad.'},
+        {icon:'assets/images/concepto-etapa9-1.png', name:'Trabajo territorial', desc:'Llevar las acciones de salud directamente a cada territorio y comunidad.'},
+        {icon:'assets/images/concepto-etapa9-2.png', name:'Equipos Básicos de Salud', desc:'Equipos que acercan el cuidado a los hogares y zonas con más necesidades.'},
+        {icon:'assets/images/concepto-etapa9-3.png', name:'Equidad y bienestar', desc:'Orientar las acciones hacia la equidad y el bienestar de la población.'},
+        {icon:'assets/images/concepto-etapa9-4.png', name:'Prevención', desc:'Priorizar la promoción de la salud y la prevención de la enfermedad.'},
     ],
     10: [
-        {icon:'👣', name:'Fortalecimiento continuo', desc:'La APS se refuerza día a día para construir salud junto a las comunidades.'},
-        {icon:'🤝', name:'Participación comunitaria', desc:'Las comunidades siguen siendo protagonistas en el cuidado de su salud.'},
-        {icon:'💚', name:'Atención integral', desc:'Cuidado completo de promoción, prevención y atención en cada etapa de la vida.'},
-        {icon:'📍', name:'Acercamiento al territorio', desc:'Los equipos llevan el cuidado directamente a los hogares y territorios.'},
+        {icon:'assets/images/concepto-etapa10-1.png', name:'Fortalecimiento continuo', desc:'La APS se refuerza día a día para construir salud junto a las comunidades.'},
+        {icon:'assets/images/concepto-etapa10-2.png', name:'Participación comunitaria', desc:'Las comunidades siguen siendo protagonistas en el cuidado de su salud.'},
+        {icon:'assets/images/concepto-etapa10-3.png', name:'Atención integral', desc:'Cuidado completo de promoción, prevención y atención en cada etapa de la vida.'},
+        {icon:'assets/images/concepto-etapa10-4.png', name:'Acercamiento al territorio', desc:'Los equipos llevan el cuidado directamente a los hogares y territorios.'},
     ],
 };
 
@@ -357,7 +347,9 @@ function openApsModal(index, dir) {
     iconsRow.innerHTML = concepts.map((c, ci) => `
         <button type="button" class="aps-modal__concept" data-ci="${ci}"
                 aria-expanded="false" aria-controls="aps-concept-info">
-            <div class="aps-modal__concept-icon">${c.icon}</div>
+            <div class="aps-modal__concept-icon">
+                <img src="${c.icon}" alt="${esc(c.name)}" width="52" height="52">
+            </div>
             <span class="aps-modal__concept-name">${esc(c.name)}</span>
             <span class="aps-modal__concept-hint" aria-hidden="true">ⓘ</span>
         </button>`).join('')
@@ -385,7 +377,9 @@ function openApsModal(index, dir) {
             btn.classList.add('active');
             btn.setAttribute('aria-expanded', 'true');
             infoBox.innerHTML = `
-                <span class="aps-modal__concept-info-icon">${c.icon}</span>
+                <span class="aps-modal__concept-info-icon">
+                    <img src="${c.icon}" alt="${esc(c.name)}" width="32" height="32">
+                </span>
                 <span class="aps-modal__concept-info-text">
                     <strong>${esc(c.name)}</strong>
                     ${esc(c.desc || '')}

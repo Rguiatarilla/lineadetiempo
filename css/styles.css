@@ -164,7 +164,7 @@ body{
 /* Imagen de fondo con filtro sepia */
 .aps-hero__bg{
     position:absolute;inset:0;
-    background-image:url('../assets/images/aps-hero-bg.jpg');
+    background-image:url('../assets/images/aps-hero-bg.png');
     background-size:cover;
     background-position:center 30%;
     filter:sepia(28%) contrast(1) brightness(1.05) saturate(1.1);
@@ -412,14 +412,16 @@ body{
     display:flex;align-items:center;justify-content:center;
     position:relative;
 }
-/* Icono SVG temático dentro del nodo */
+/* Imagen PNG dentro del nodo */
 .aps-node__circle .aps-node__icon{
     width:30px;height:30px;
-    color:#c0392b;
     display:flex;align-items:center;justify-content:center;
-    transition:transform var(--dur-base) var(--ease-spring),color var(--dur-fast);
+    transition:transform var(--dur-base) var(--ease-spring);
 }
-.aps-node__circle .aps-node__icon svg{width:100%;height:100%}
+.aps-node__circle .aps-node__icon img{
+    width:30px;height:30px;
+    object-fit:contain;display:block;
+}
 .aps-node__circle:hover .aps-node__icon{transform:scale(1.12)}
 .aps-node__circle:hover{
     transform:scale(1.25) translateY(-2px);
@@ -793,10 +795,14 @@ body{
     position:relative;
     width:52px;height:52px;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
-    font-size:1.4rem;
+    overflow:hidden;
     background:#f5f0e8;
     border:2px solid #ddc89a;
     transition:border-color var(--dur-fast),box-shadow var(--dur-fast),transform var(--dur-fast) var(--ease-spring);
+}
+.aps-modal__concept-icon img{
+    width:52px;height:52px;
+    object-fit:contain;display:block;
 }
 .aps-modal__concept:hover .aps-modal__concept-icon{
     border-color:#c0392b;box-shadow:0 4px 12px -2px rgba(192,57,43,.3);
