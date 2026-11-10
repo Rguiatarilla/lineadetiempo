@@ -157,17 +157,16 @@ body{
 .aps-hero{
     position:relative;
     overflow:hidden;
-    width:100%;
-    aspect-ratio:1600/500;   /* proporción exacta de la imagen */
+    height:320px;
     display:flex;align-items:center;
 }
 
-/* Imagen de fondo completa y proporcional */
+/* Imagen de fondo completa */
 .aps-hero__bg{
     position:absolute;inset:0;
     background-image:url('../assets/images/aps-hero-bg.png');
-    background-size:100% 100%;
-    background-position:center center;
+    background-size:cover;
+    background-position:center 60%;
     background-repeat:no-repeat;
     filter:none;
     z-index:0;
@@ -215,7 +214,7 @@ body{
 }
 .aps-hero__title{
     font-family:var(--ff-serif);
-    font-size:clamp(1.8rem,3.5vw,2.8rem);
+    font-size:clamp(1.8rem,3vw,2.6rem);
     font-weight:900;line-height:1.05;
     color:#fff;
     text-transform:uppercase;
@@ -937,9 +936,9 @@ body{
     .page-header__inner{flex-direction:column;align-items:flex-start;gap:12px}
 
     /* APS hero mobile */
-    .aps-hero{aspect-ratio:auto;min-height:220px}
-    .aps-hero__bg{background-size:cover;background-position:center top}
-    .aps-hero__content{padding:20px 16px;gap:16px}
+    .aps-hero{height:240px}
+    .aps-hero__bg{background-position:center center}
+    .aps-hero__content{padding:16px}
     .aps-hero__quote{flex:none;width:100%}
     .aps-scroll{padding:10px 40px}
     .aps-nav{display:none}
