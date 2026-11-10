@@ -157,12 +157,12 @@ body{
 .aps-hero{
     position:relative;
     overflow:hidden;
-    height:500px;
-    min-height:500px;
+    width:100%;
+    aspect-ratio:1600/500;   /* proporción exacta de la imagen */
     display:flex;align-items:center;
 }
 
-/* Imagen de fondo — colores naturales, tamaño exacto */
+/* Imagen de fondo completa y proporcional */
 .aps-hero__bg{
     position:absolute;inset:0;
     background-image:url('../assets/images/aps-hero-bg.png');
@@ -172,11 +172,7 @@ body{
     filter:none;
     z-index:0;
 }
-@keyframes apsHeroZoom{
-    from{transform:scale(1.0)}
-    to  {transform:scale(1.0)}
-}
-/* Overlay muy suave izquierda para legibilidad del texto */
+/* Overlay suave izquierda para legibilidad del texto */
 .aps-hero__overlay{
     position:absolute;inset:0;
     background:linear-gradient(
@@ -192,13 +188,13 @@ body{
     position:relative;z-index:2;
     max-width:1200px;width:100%;
     margin:0 auto;
-    padding:28px 40px;
+    padding:0 40px;
     display:flex;align-items:center;gap:40px;
     flex-wrap:wrap;
 }
 
 .aps-hero__left{
-    flex:1;min-width:260px;
+    flex:1;min-width:240px;
     animation:slideInLeft .9s var(--ease-out) .1s both;
 }
 @keyframes slideInLeft{
@@ -207,19 +203,19 @@ body{
 }
 
 .aps-hero__kicker{
-    font-size:.72rem;font-weight:700;
+    font-size:.7rem;font-weight:700;
     letter-spacing:.10em;text-transform:uppercase;
-    color:#e8c87a;display:block;margin-bottom:6px;
+    color:#e8c87a;display:block;margin-bottom:4px;
 }
 .aps-hero__title-sm{
     font-family:var(--ff-sans);
-    font-size:.9rem;font-weight:500;
+    font-size:.85rem;font-weight:500;
     color:rgba(255,248,235,.90);
     margin-bottom:4px;display:block;
 }
 .aps-hero__title{
     font-family:var(--ff-serif);
-    font-size:clamp(2.4rem,5vw,3.6rem);
+    font-size:clamp(1.8rem,3.5vw,2.8rem);
     font-weight:900;line-height:1.05;
     color:#fff;
     text-transform:uppercase;
@@ -941,9 +937,9 @@ body{
     .page-header__inner{flex-direction:column;align-items:flex-start;gap:12px}
 
     /* APS hero mobile */
-    .aps-hero{height:auto;min-height:300px;flex-direction:column;padding:0}
+    .aps-hero{aspect-ratio:auto;min-height:220px}
     .aps-hero__bg{background-size:cover;background-position:center top}
-    .aps-hero__content{padding:24px 16px;gap:20px}
+    .aps-hero__content{padding:20px 16px;gap:16px}
     .aps-hero__quote{flex:none;width:100%}
     .aps-scroll{padding:10px 40px}
     .aps-nav{display:none}
