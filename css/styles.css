@@ -157,36 +157,38 @@ body{
 .aps-hero{
     position:relative;
     overflow:hidden;
-    height:320px;
+    width:100%;
     display:flex;align-items:center;
 }
 
-/* Imagen de fondo completa */
-.aps-hero__bg{
-    position:absolute;inset:0;
-    background-image:url('../assets/images/aps-hero-bg.png');
-    background-size:cover;
-    background-position:center 60%;
-    background-repeat:no-repeat;
-    filter:none;
+/* La imagen ocupa el 100% del ancho — la altura se ajusta sola */
+.aps-hero__img{
+    display:block;
+    width:100%;
+    height:auto;
+    position:relative;
     z-index:0;
 }
+
 /* Overlay suave izquierda para legibilidad del texto */
 .aps-hero__overlay{
     position:absolute;inset:0;
     background:linear-gradient(
         to right,
-        rgba(0,0,0,.35) 0%,
-        rgba(0,0,0,.15) 45%,
+        rgba(0,0,0,.38) 0%,
+        rgba(0,0,0,.18) 50%,
         rgba(0,0,0,.0)  100%
     );
     z-index:1;
 }
 
 .aps-hero__content{
-    position:relative;z-index:2;
+    position:absolute;
+    inset:0;
+    z-index:2;
     max-width:1200px;width:100%;
     margin:0 auto;
+    left:50%;transform:translateX(-50%);
     padding:0 40px;
     display:flex;align-items:center;gap:40px;
     flex-wrap:wrap;
@@ -214,17 +216,17 @@ body{
 }
 .aps-hero__title{
     font-family:var(--ff-serif);
-    font-size:clamp(1.8rem,3vw,2.6rem);
+    font-size:clamp(1.6rem,2.8vw,2.6rem);
     font-weight:900;line-height:1.05;
     color:#fff;
     text-transform:uppercase;
     letter-spacing:.01em;
-    margin-bottom:12px;
+    margin-bottom:10px;
     text-shadow:0 2px 16px rgba(0,0,0,.5);
 }
 .aps-hero__sub{
-    font-size:.9rem;color:rgba(255,248,235,.90);
-    line-height:1.7;max-width:440px;
+    font-size:.88rem;color:rgba(255,248,235,.90);
+    line-height:1.7;max-width:420px;
 }
 .aps-hero__sub strong{color:#e8c87a}
 
@@ -936,9 +938,7 @@ body{
     .page-header__inner{flex-direction:column;align-items:flex-start;gap:12px}
 
     /* APS hero mobile */
-    .aps-hero{height:240px}
-    .aps-hero__bg{background-position:center center}
-    .aps-hero__content{padding:16px}
+    .aps-hero__content{padding:0 16px;gap:14px}
     .aps-hero__quote{flex:none;width:100%}
     .aps-scroll{padding:10px 40px}
     .aps-nav{display:none}
