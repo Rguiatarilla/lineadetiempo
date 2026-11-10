@@ -1,6 +1,6 @@
-﻿/**
- * app.js — Línea de tiempo de Atención Primaria en Salud
- * APS → infografía horizontal tipo "Un viaje por la historia"
+/**
+ * app.js � L�nea de tiempo de Atenci�n Primaria en Salud
+ * APS ? infograf�a horizontal tipo "Un viaje por la historia"
  * Depende de js/data.js (apsData)
  */
 'use strict';
@@ -8,23 +8,23 @@
 const ANIM = { step:80, max:480, thresh:0.10, margin:'0px 0px -40px 0px' };
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ════════════════════════════════════════════════════════════
-   APS — INFOGRAFÍA HORIZONTAL (Un viaje por la historia)
-   ════════════════════════════════════════════════════════════ */
+/* ------------------------------------------------------------
+   APS � INFOGRAF�A HORIZONTAL (Un viaje por la historia)
+   ------------------------------------------------------------ */
 let apsModalIdx = -1;
 
-/* Íconos de la línea de tiempo — imágenes PNG por etapa */
+/* �conos de la l�nea de tiempo � im�genes PNG por etapa */
 const APS_ICONS = {
-    1:  `<img src="assets/images/linea-etapa1.png"  alt="Etapa 1"  width="76" height="76">`,
-    2:  `<img src="assets/images/linea-etapa2.png"  alt="Etapa 2"  width="76" height="76">`,
-    3:  `<img src="assets/images/linea-etapa3.png"  alt="Etapa 3"  width="76" height="76">`,
-    4:  `<img src="assets/images/linea-etapa4.png"  alt="Etapa 4"  width="76" height="76">`,
-    5:  `<img src="assets/images/linea-etapa5.png"  alt="Etapa 5"  width="76" height="76">`,
-    6:  `<img src="assets/images/linea-etapa6.png"  alt="Etapa 6"  width="76" height="76">`,
-    7:  `<img src="assets/images/linea-etapa7.png"  alt="Etapa 7"  width="76" height="76">`,
-    8:  `<img src="assets/images/linea-etapa8.png"  alt="Etapa 8"  width="76" height="76">`,
-    9:  `<img src="assets/images/linea-etapa9.png"  alt="Etapa 9"  width="76" height="76">`,
-    10: `<img src="assets/images/linea-etapa10.png" alt="Etapa 10" width="76" height="76">`,
+    1:  `<img src="assets/images/linea/etapa1.png"  alt="Etapa 1"  width="76" height="76">`,
+    2:  `<img src="assets/images/linea/etapa2.png"  alt="Etapa 2"  width="76" height="76">`,
+    3:  `<img src="assets/images/linea/etapa3.png"  alt="Etapa 3"  width="76" height="76">`,
+    4:  `<img src="assets/images/linea/etapa4.png"  alt="Etapa 4"  width="76" height="76">`,
+    5:  `<img src="assets/images/linea/etapa5.png"  alt="Etapa 5"  width="76" height="76">`,
+    6:  `<img src="assets/images/linea/etapa6.png"  alt="Etapa 6"  width="76" height="76">`,
+    7:  `<img src="assets/images/linea/etapa7.png"  alt="Etapa 7"  width="76" height="76">`,
+    8:  `<img src="assets/images/linea/etapa8.png"  alt="Etapa 8"  width="76" height="76">`,
+    9:  `<img src="assets/images/linea/etapa9.png"  alt="Etapa 9"  width="76" height="76">`,
+    10: `<img src="assets/images/linea/etapa10.png" alt="Etapa 10" width="76" height="76">`,
 };
 
 function renderAps() {
@@ -38,9 +38,9 @@ function renderAps() {
     labelsBot.innerHTML = '';
 
     apsData.forEach((item, i) => {
-        const delay = Math.min(i * 90, 700); // stagger 90ms por elemento, máx 700ms
+        const delay = Math.min(i * 90, 700); // stagger 90ms por elemento, m�x 700ms
 
-        /* ── Etiqueta SUPERIOR ── */
+        /* -- Etiqueta SUPERIOR -- */
         const top = document.createElement('div');
         top.className = 'aps-label-top';
         top.style.setProperty('--aps-stagger', `${delay}ms`);
@@ -52,7 +52,7 @@ function renderAps() {
         }
         labelsTop.appendChild(top);
 
-        /* ── Nodo circular ── */
+        /* -- Nodo circular -- */
         const node = document.createElement('div');
         node.className = 'aps-node';
         node.style.setProperty('--aps-stagger', `${delay}ms`);
@@ -60,14 +60,14 @@ function renderAps() {
         const apsIcon = APS_ICONS[item.etapa] || '';
         node.innerHTML = `
             <button class="aps-node__circle"
-                    aria-label="Etapa ${item.etapa}: ${item.title}. Haz clic para ver más."
+                    aria-label="Etapa ${item.etapa}: ${item.title}. Haz clic para ver m�s."
                     data-idx="${i}">
                 <span class="aps-node__icon">${apsIcon}</span>
             </button>`;
         node.querySelector('.aps-node__circle').addEventListener('click', () => openApsModal(i));
         nodes.appendChild(node);
 
-        /* ── Etiqueta INFERIOR ── */
+        /* -- Etiqueta INFERIOR -- */
         const bot = document.createElement('div');
         bot.className = 'aps-label-bottom';
         bot.style.setProperty('--aps-stagger', `${delay}ms`);
@@ -76,11 +76,11 @@ function renderAps() {
                 <span class="aps-etapa-tag" style="font-size:.55rem">Etapa ${item.etapa}</span>
                 <span class="aps-year-badge">${esc(item.year)}</span>
                 <span class="aps-label-subtitle">${esc(item.subtitle)}</span>
-                <button class="aps-know-more" data-idx="${i}">Conocer más →</button>`;
+                <button class="aps-know-more" data-idx="${i}">Conocer m�s ?</button>`;
         } else {
             bot.innerHTML = `
                 <span class="aps-year-badge">${esc(item.year)}</span>
-                <button class="aps-know-more" data-idx="${i}">Conocer más →</button>`;
+                <button class="aps-know-more" data-idx="${i}">Conocer m�s ?</button>`;
         }
         bot.querySelectorAll('.aps-know-more').forEach(b => {
             b.addEventListener('click', () => openApsModal(parseInt(b.dataset.idx)));
@@ -148,7 +148,7 @@ function renderApsValores() {
         <div class="aps-valor">
             <div class="aps-valor__icon">${svgParticipacion}</div>
             <div class="aps-valor__text">
-                <strong class="aps-valor__name">Participación</strong>
+                <strong class="aps-valor__name">Participaci�n</strong>
                 <span class="aps-valor__desc">Porque la comunidad hace parte de las decisiones.</span>
             </div>
         </div>
@@ -183,7 +183,7 @@ function renderApsValores() {
                 cada historia transforma,<br>
                 <em>cada persona importa.</em>
             </p>
-            <span class="aps-valor__heart" aria-hidden="true">🤍</span>
+            <span class="aps-valor__heart" aria-hidden="true">??</span>
         </div>`;
 
     wrapper.appendChild(bar);
@@ -230,7 +230,7 @@ function setupApsObserver() {
         .forEach(el => apsObserver.observe(el));
 }
 
-/* ── Modal APS ────────────────────────────────────────────────── */
+/* -- Modal APS -------------------------------------------------- */
 function setupApsModal() {
     document.getElementById('aps-modal-backdrop')?.addEventListener('click', closeApsModal);
     document.getElementById('aps-modal-close')?.addEventListener('click',    closeApsModal);
@@ -252,68 +252,68 @@ function apsModalNav(dir) {
     openApsModal(next, dir);
 }
 
-/* Conceptos clave por etapa — imágenes PNG */
+/* Conceptos clave por etapa � im�genes PNG */
 const APS_CONCEPTS = {
     1: [
-        {icon:'assets/images/concepto-etapa1-1.png', name:'Organización de servicios', desc:'Ordenar los servicios de salud en una red coordinada para que funcionen de manera articulada.'},
-        {icon:'assets/images/concepto-etapa1-2.png', name:'Niveles de atención', desc:'Clasificar la atención según su complejidad, desde lo básico y cercano hasta lo especializado.'},
-        {icon:'assets/images/concepto-etapa1-3.png', name:'Acceso a la población', desc:'Acercar los servicios de salud a las personas según sus necesidades reales.'},
+        {icon:'assets/images/conceptos/etapa1/1.png', name:'Organizaci�n de servicios', desc:'Ordenar los servicios de salud en una red coordinada para que funcionen de manera articulada.'},
+        {icon:'assets/images/conceptos/etapa1/2.png', name:'Niveles de atenci�n', desc:'Clasificar la atenci�n seg�n su complejidad, desde lo b�sico y cercano hasta lo especializado.'},
+        {icon:'assets/images/conceptos/etapa1/3.png', name:'Acceso a la poblaci�n', desc:'Acercar los servicios de salud a las personas seg�n sus necesidades reales.'},
     ],
     2: [
-        {icon:'assets/images/concepto-etapa2-1.png', name:'Promoción de la salud', desc:'Fomentar hábitos y condiciones que mantengan sanas a las personas, no solo tratar enfermedades.'},
-        {icon:'assets/images/concepto-etapa2-2.png', name:'Prevención de la enfermedad', desc:'Actuar antes de que aparezca la enfermedad para evitar o reducir sus riesgos.'},
-        {icon:'assets/images/concepto-etapa2-3.png', name:'Participación comunitaria', desc:'Involucrar a la comunidad en las decisiones y el cuidado de su propia salud.'},
-        {icon:'assets/images/concepto-etapa2-4.png', name:'Atención cercana y accesible', desc:'Llevar la atención al entorno de las personas, fácil de alcanzar y usar.'},
-        {icon:'assets/images/concepto-etapa2-5.png', name:'Equidad en salud', desc:'Dar a cada persona lo que necesita para tener las mismas oportunidades de salud.'},
-        {icon:'assets/images/concepto-etapa2-6.png', name:'Personas, familias y comunidades', desc:'Entender la salud desde las personas, sus familias y sus comunidades.'},
+        {icon:'assets/images/conceptos/etapa2/1.png', name:'Promoci�n de la salud', desc:'Fomentar h�bitos y condiciones que mantengan sanas a las personas, no solo tratar enfermedades.'},
+        {icon:'assets/images/conceptos/etapa2/2.png', name:'Prevenci�n de la enfermedad', desc:'Actuar antes de que aparezca la enfermedad para evitar o reducir sus riesgos.'},
+        {icon:'assets/images/conceptos/etapa2/3.png', name:'Participaci�n comunitaria', desc:'Involucrar a la comunidad en las decisiones y el cuidado de su propia salud.'},
+        {icon:'assets/images/conceptos/etapa2/4.png', name:'Atenci�n cercana y accesible', desc:'Llevar la atenci�n al entorno de las personas, f�cil de alcanzar y usar.'},
+        {icon:'assets/images/conceptos/etapa2/5.png', name:'Equidad en salud', desc:'Dar a cada persona lo que necesita para tener las mismas oportunidades de salud.'},
+        {icon:'assets/images/conceptos/etapa2/6.png', name:'Personas, familias y comunidades', desc:'Entender la salud desde las personas, sus familias y sus comunidades.'},
     ],
     3: [
-        {icon:'assets/images/concepto-etapa3-1.png', name:'Promoción del bienestar', desc:'Impulsar condiciones de vida que favorezcan una mejor calidad de vida.'},
-        {icon:'assets/images/concepto-etapa3-2.png', name:'Entornos saludables', desc:'Crear espacios (hogar, trabajo, barrio) que protejan y mejoren la salud.'},
-        {icon:'assets/images/concepto-etapa3-3.png', name:'Empoderamiento comunitario', desc:'Dar a la comunidad voz y capacidad para decidir sobre su salud.'},
-        {icon:'assets/images/concepto-etapa3-4.png', name:'Participación activa', desc:'La comunidad no solo recibe, también actúa en el cuidado de la salud.'},
+        {icon:'assets/images/conceptos/etapa3/1.png', name:'Promoci�n del bienestar', desc:'Impulsar condiciones de vida que favorezcan una mejor calidad de vida.'},
+        {icon:'assets/images/conceptos/etapa3/2.png', name:'Entornos saludables', desc:'Crear espacios (hogar, trabajo, barrio) que protejan y mejoren la salud.'},
+        {icon:'assets/images/conceptos/etapa3/3.png', name:'Empoderamiento comunitario', desc:'Dar a la comunidad voz y capacidad para decidir sobre su salud.'},
+        {icon:'assets/images/conceptos/etapa3/4.png', name:'Participaci�n activa', desc:'La comunidad no solo recibe, tambi�n act�a en el cuidado de la salud.'},
     ],
     4: [
-        {icon:'assets/images/concepto-etapa4-1.png', name:'Financiación del sistema', desc:'Definir cómo se paga y sostiene económicamente el sistema de salud.'},
-        {icon:'assets/images/concepto-etapa4-2.png', name:'Acceso a servicios', desc:'Garantizar que las personas puedan usar los servicios cuando los necesiten.'},
-        {icon:'assets/images/concepto-etapa4-3.png', name:'Organización del sistema', desc:'Reorganizar cómo se administran y prestan los servicios de salud.'},
-        {icon:'assets/images/concepto-etapa4-4.png', name:'Transformación del modelo', desc:'Cambiar la forma en que se entiende y entrega la salud en el país.'},
+        {icon:'assets/images/conceptos/etapa4/1.png', name:'Financiaci�n del sistema', desc:'Definir c�mo se paga y sostiene econ�micamente el sistema de salud.'},
+        {icon:'assets/images/conceptos/etapa4/2.png', name:'Acceso a servicios', desc:'Garantizar que las personas puedan usar los servicios cuando los necesiten.'},
+        {icon:'assets/images/conceptos/etapa4/3.png', name:'Organizaci�n del sistema', desc:'Reorganizar c�mo se administran y prestan los servicios de salud.'},
+        {icon:'assets/images/conceptos/etapa4/4.png', name:'Transformaci�n del modelo', desc:'Cambiar la forma en que se entiende y entrega la salud en el pa�s.'},
     ],
     5: [
-        {icon:'assets/images/concepto-etapa5-1.png', name:'Equidad en salud', desc:'Reducir las diferencias injustas en el acceso y los resultados de salud.'},
-        {icon:'assets/images/concepto-etapa5-2.png', name:'Sistemas integrales', desc:'Construir sistemas que atiendan a la persona de forma completa y continua.'},
-        {icon:'assets/images/concepto-etapa5-3.png', name:'Centrado en personas', desc:'Poner a las personas y sus necesidades en el centro de la atención.'},
-        {icon:'assets/images/concepto-etapa5-4.png', name:'Reducción de desigualdades', desc:'Cerrar las brechas de salud entre distintos grupos de población.'},
+        {icon:'assets/images/conceptos/etapa5/1.png', name:'Equidad en salud', desc:'Reducir las diferencias injustas en el acceso y los resultados de salud.'},
+        {icon:'assets/images/conceptos/etapa5/2.png', name:'Sistemas integrales', desc:'Construir sistemas que atiendan a la persona de forma completa y continua.'},
+        {icon:'assets/images/conceptos/etapa5/3.png', name:'Centrado en personas', desc:'Poner a las personas y sus necesidades en el centro de la atenci�n.'},
+        {icon:'assets/images/conceptos/etapa5/4.png', name:'Reducci�n de desigualdades', desc:'Cerrar las brechas de salud entre distintos grupos de poblaci�n.'},
     ],
     6: [
-        {icon:'assets/images/concepto-etapa6-1.png', name:'Atención integral', desc:'Atender la salud de manera completa, en todas las etapas de la vida.'},
-        {icon:'assets/images/concepto-etapa6-2.png', name:'Participación comunitaria', desc:'La comunidad participa en la planeación y el cuidado de su salud.'},
-        {icon:'assets/images/concepto-etapa6-3.png', name:'Acción intersectorial', desc:'Trabajar entre varios sectores (salud, educación, ambiente) por el bienestar.'},
-        {icon:'assets/images/concepto-etapa6-4.png', name:'Enfoque territorial', desc:'Adaptar la salud a las características y necesidades de cada territorio.'},
+        {icon:'assets/images/conceptos/etapa6/1.png', name:'Atenci�n integral', desc:'Atender la salud de manera completa, en todas las etapas de la vida.'},
+        {icon:'assets/images/conceptos/etapa6/2.png', name:'Participaci�n comunitaria', desc:'La comunidad participa en la planeaci�n y el cuidado de su salud.'},
+        {icon:'assets/images/conceptos/etapa6/3.png', name:'Acci�n intersectorial', desc:'Trabajar entre varios sectores (salud, educaci�n, ambiente) por el bienestar.'},
+        {icon:'assets/images/conceptos/etapa6/4.png', name:'Enfoque territorial', desc:'Adaptar la salud a las caracter�sticas y necesidades de cada territorio.'},
     ],
     7: [
-        {icon:'assets/images/concepto-etapa7-1.png', name:'Derecho fundamental', desc:'La salud se reconoce como un derecho autónomo e irrenunciable de todos.'},
-        {icon:'assets/images/concepto-etapa7-2.png', name:'Atención oportuna', desc:'Recibir la atención en el momento adecuado, sin demoras que la perjudiquen.'},
-        {icon:'assets/images/concepto-etapa7-3.png', name:'Atención eficaz', desc:'Que la atención realmente resuelva y responda a los problemas de salud.'},
-        {icon:'assets/images/concepto-etapa7-4.png', name:'Atención de calidad', desc:'Servicios seguros, dignos y centrados en el bienestar de la persona.'},
+        {icon:'assets/images/conceptos/etapa7/1.png', name:'Derecho fundamental', desc:'La salud se reconoce como un derecho aut�nomo e irrenunciable de todos.'},
+        {icon:'assets/images/conceptos/etapa7/2.png', name:'Atenci�n oportuna', desc:'Recibir la atenci�n en el momento adecuado, sin demoras que la perjudiquen.'},
+        {icon:'assets/images/conceptos/etapa7/3.png', name:'Atenci�n eficaz', desc:'Que la atenci�n realmente resuelva y responda a los problemas de salud.'},
+        {icon:'assets/images/conceptos/etapa7/4.png', name:'Atenci�n de calidad', desc:'Servicios seguros, dignos y centrados en el bienestar de la persona.'},
     ],
     8: [
-        {icon:'assets/images/concepto-etapa8-1.png', name:'Rutas de atención', desc:'Caminos claros que organizan la promoción, prevención, atención y cuidado.'},
-        {icon:'assets/images/concepto-etapa8-2.png', name:'Compromiso global', desc:'Astaná reafirma a nivel mundial el compromiso con la Atención Primaria.'},
-        {icon:'assets/images/concepto-etapa8-3.png', name:'Atención accesible', desc:'Servicios al alcance de todas las personas, sin barreras.'},
-        {icon:'assets/images/concepto-etapa8-4.png', name:'Atención sostenible', desc:'Un modelo que se puede mantener en el tiempo de forma estable.'},
+        {icon:'assets/images/conceptos/etapa8/1.png', name:'Rutas de atenci�n', desc:'Caminos claros que organizan la promoci�n, prevenci�n, atenci�n y cuidado.'},
+        {icon:'assets/images/conceptos/etapa8/2.png', name:'Compromiso global', desc:'Astan� reafirma a nivel mundial el compromiso con la Atenci�n Primaria.'},
+        {icon:'assets/images/conceptos/etapa8/3.png', name:'Atenci�n accesible', desc:'Servicios al alcance de todas las personas, sin barreras.'},
+        {icon:'assets/images/conceptos/etapa8/4.png', name:'Atenci�n sostenible', desc:'Un modelo que se puede mantener en el tiempo de forma estable.'},
     ],
     9: [
-        {icon:'assets/images/concepto-etapa9-1.png', name:'Trabajo territorial', desc:'Llevar las acciones de salud directamente a cada territorio y comunidad.'},
-        {icon:'assets/images/concepto-etapa9-2.png', name:'Equipos Básicos de Salud', desc:'Equipos que acercan el cuidado a los hogares y zonas con más necesidades.'},
-        {icon:'assets/images/concepto-etapa9-3.png', name:'Equidad y bienestar', desc:'Orientar las acciones hacia la equidad y el bienestar de la población.'},
-        {icon:'assets/images/concepto-etapa9-4.png', name:'Prevención', desc:'Priorizar la promoción de la salud y la prevención de la enfermedad.'},
+        {icon:'assets/images/conceptos/etapa9/1.png', name:'Trabajo territorial', desc:'Llevar las acciones de salud directamente a cada territorio y comunidad.'},
+        {icon:'assets/images/conceptos/etapa9/2.png', name:'Equipos B�sicos de Salud', desc:'Equipos que acercan el cuidado a los hogares y zonas con m�s necesidades.'},
+        {icon:'assets/images/conceptos/etapa9/3.png', name:'Equidad y bienestar', desc:'Orientar las acciones hacia la equidad y el bienestar de la poblaci�n.'},
+        {icon:'assets/images/conceptos/etapa9/4.png', name:'Prevenci�n', desc:'Priorizar la promoci�n de la salud y la prevenci�n de la enfermedad.'},
     ],
     10: [
-        {icon:'assets/images/concepto-etapa10-1.png', name:'Fortalecimiento continuo', desc:'La APS se refuerza día a día para construir salud junto a las comunidades.'},
-        {icon:'assets/images/concepto-etapa10-2.png', name:'Participación comunitaria', desc:'Las comunidades siguen siendo protagonistas en el cuidado de su salud.'},
-        {icon:'assets/images/concepto-etapa10-3.png', name:'Atención integral', desc:'Cuidado completo de promoción, prevención y atención en cada etapa de la vida.'},
-        {icon:'assets/images/concepto-etapa10-4.png', name:'Acercamiento al territorio', desc:'Los equipos llevan el cuidado directamente a los hogares y territorios.'},
+        {icon:'assets/images/conceptos/etapa10/1.png', name:'Fortalecimiento continuo', desc:'La APS se refuerza d�a a d�a para construir salud junto a las comunidades.'},
+        {icon:'assets/images/conceptos/etapa10/2.png', name:'Participaci�n comunitaria', desc:'Las comunidades siguen siendo protagonistas en el cuidado de su salud.'},
+        {icon:'assets/images/conceptos/etapa10/3.png', name:'Atenci�n integral', desc:'Cuidado completo de promoci�n, prevenci�n y atenci�n en cada etapa de la vida.'},
+        {icon:'assets/images/conceptos/etapa10/4.png', name:'Acercamiento al territorio', desc:'Los equipos llevan el cuidado directamente a los hogares y territorios.'},
     ],
 };
 
@@ -331,16 +331,16 @@ function openApsModal(index, dir) {
     document.getElementById('aps-modal-img').src              = item.image || '';
     document.getElementById('aps-modal-img').alt              = item.title;
 
-    /* Título dinámico de la sección central */
+    /* T�tulo din�mico de la secci�n central */
     document.getElementById('aps-modal-moment-title').textContent =
-        index === 0 ? '¿Qué estaba pasando?' : 'El gran momento del viaje';
+        index === 0 ? '�Qu� estaba pasando?' : 'El gran momento del viaje';
 
     /* Enlace */
     const linkEl = document.getElementById('aps-modal-link');
     if (item.link) { linkEl.href = item.link; linkEl.hidden = false; }
     else           { linkEl.hidden = true; }
 
-    /* Iconos de conceptos (clicables, muestran una pequeña descripción) */
+    /* Iconos de conceptos (clicables, muestran una peque�a descripci�n) */
     const iconsRow = document.getElementById('aps-modal-icons');
     const concepts = APS_CONCEPTS[item.etapa] || [];
     iconsRow.innerHTML = concepts.map((c, ci) => `
@@ -350,11 +350,11 @@ function openApsModal(index, dir) {
                 <img src="${c.icon}" alt="${esc(c.name)}" width="52" height="52">
             </div>
             <span class="aps-modal__concept-name">${esc(c.name)}</span>
-            <span class="aps-modal__concept-hint" aria-hidden="true">ⓘ</span>
+            <span class="aps-modal__concept-hint" aria-hidden="true">?</span>
         </button>`).join('')
         + `<div class="aps-modal__concept-info" id="aps-concept-info" hidden></div>`;
 
-    /* Click en cada concepto: muestra/oculta su descripción */
+    /* Click en cada concepto: muestra/oculta su descripci�n */
     const infoBox = iconsRow.querySelector('.aps-modal__concept-info');
     iconsRow.querySelectorAll('.aps-modal__concept').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -389,7 +389,7 @@ function openApsModal(index, dir) {
         });
     });
 
-    /* Botones de navegación + contador */
+    /* Botones de navegaci�n + contador */
     const btnPrev = document.getElementById('aps-modal-prev');
     const btnNext = document.getElementById('aps-modal-next');
     const counter = document.getElementById('aps-modal-counter');
@@ -397,7 +397,7 @@ function openApsModal(index, dir) {
     if (btnNext) btnNext.disabled = index >= apsData.length - 1;
     if (counter) counter.textContent = `${index + 1} / ${apsData.length}`;
 
-    /* Animación de deslizamiento al navegar entre etapas */
+    /* Animaci�n de deslizamiento al navegar entre etapas */
     const panel = modal.querySelector('.aps-modal__panel');
     if (panel && dir && !reduced) {
         panel.classList.remove('aps-anim-next', 'aps-anim-prev');
@@ -423,18 +423,18 @@ function closeApsModal() {
     apsModalIdx = -1;
 }
 
-/* ════════════════════════════════════════════════════════════
+/* ------------------------------------------------------------
    HELPERS
-   ════════════════════════════════════════════════════════════ */
+   ------------------------------------------------------------ */
 function esc(str) {
     return String(str)
         .replace(/&/g,'&amp;').replace(/</g,'&lt;')
         .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-/* ════════════════════════════════════════════════════════════
+/* ------------------------------------------------------------
    INICIO
-   ════════════════════════════════════════════════════════════ */
+   ------------------------------------------------------------ */
 document.addEventListener('DOMContentLoaded', () => {
     renderAps();
     document.getElementById('panel-aps').dataset.init = '1';

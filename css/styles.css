@@ -1,8 +1,8 @@
-﻿/* ================================================================
-   LÍNEA DEL TIEMPO — ATENCIÓN PRIMARIA EN SALUD
+/* ================================================================
+   L�NEA DEL TIEMPO � ATENCI�N PRIMARIA EN SALUD
    ================================================================ */
 
-/* ── 1. VARIABLES ─────────────────────────────────────────────── */
+/* -- 1. VARIABLES ----------------------------------------------- */
 :root {
     --aps:        #2e9e82;
     --aps-dark:   #1a6b57;
@@ -10,7 +10,7 @@
     --aps-pastel: #b8e8d8;
     --aps-glow:   rgba(46,158,130,.22);
 
-    /* Acento secundario para los degradados del título */
+    /* Acento secundario para los degradados del t�tulo */
     --sc:         #3d7fb5;
     --sc-dark:    #245080;
 
@@ -42,7 +42,7 @@
     --line-w:    3px;
 }
 
-/* ── 2. RESET ──────────────────────────────────────────────────── */
+/* -- 2. RESET ---------------------------------------------------- */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 
@@ -55,7 +55,7 @@ body{
     background:#eef6f2;
 }
 
-/* ── 3. ORBS ───────────────────────────────────────────────────── */
+/* -- 3. ORBS ----------------------------------------------------- */
 .bg-orb{
     position:fixed;border-radius:50%;
     filter:blur(90px);pointer-events:none;z-index:0;will-change:transform;
@@ -73,7 +73,7 @@ body{
 @keyframes orb1{from{transform:translate(0,0) scale(1)}to{transform:translate(40px,30px) scale(1.08)}}
 @keyframes orb2{from{transform:translate(0,0) scale(1)}to{transform:translate(-30px,40px) scale(1.06)}}
 
-/* ── 4. HEADER GLOBAL ──────────────────────────────────────────── */
+/* -- 4. HEADER GLOBAL -------------------------------------------- */
 .page-header{
     position:sticky;top:0;z-index:100;
     background:rgba(238,246,242,.92);
@@ -105,7 +105,7 @@ body{
     font-weight:500;margin-top:2px;
 }
 
-/* ── 5. PANELES ────────────────────────────────────────────────── */
+/* -- 5. PANELES -------------------------------------------------- */
 .tab-panel{display:none;animation:panelIn .4s var(--ease-out)}
 .tab-panel.active{display:block}
 @keyframes panelIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
@@ -143,7 +143,7 @@ body{
     max-width:520px;margin:0 auto;line-height:1.75;
 }
 
-/* ── 7. APS — INFOGRAFÍA "UN VIAJE POR LA HISTORIA" ───────────── */
+/* -- 7. APS � INFOGRAF�A "UN VIAJE POR LA HISTORIA" ------------- */
 .tab-panel--aps{
     background-color:#f5f5f5;
     background-image:none;
@@ -151,7 +151,7 @@ body{
     font-family:var(--ff-sans);
 }
 
-/* ── HERO con imagen de fondo ── */
+/* -- HERO con imagen de fondo -- */
 .aps-hero{
     position:relative;
     overflow:hidden;
@@ -159,7 +159,7 @@ body{
     display:flex;align-items:center;
 }
 
-/* La imagen ocupa el 100% del ancho — la altura se ajusta sola */
+/* La imagen ocupa el 100% del ancho � la altura se ajusta sola */
 .aps-hero__img{
     display:block;
     width:100%;
@@ -286,7 +286,7 @@ body{
     gap:0;
 }
 
-/* Etiquetas superiores (etapa + título + desc) */
+/* Etiquetas superiores (etapa + t�tulo + desc) */
 .aps-labels-top{
     display:flex;
     align-items:flex-end;
@@ -299,7 +299,7 @@ body{
     display:flex;flex-direction:column;
     align-items:center;text-align:center;
     gap:4px;
-    /* Animación de entrada desde arriba */
+    /* Animaci�n de entrada desde arriba */
     opacity:0;
     transform:translateY(-16px);
     transition:opacity .5s var(--ease-out),transform .5s var(--ease-out);
@@ -327,17 +327,17 @@ body{
     line-height:1.3;display:block;
 }
 
-/* Track con línea y nodos */
+/* Track con l�nea y nodos */
 .aps-track{
     position:relative;
     height:110px;
     display:flex;align-items:center;
 }
-/* Franja tejida — más delgada para que los círculos sobresalgan */
+/* Franja tejida � m�s delgada para que los c�rculos sobresalgan */
 .aps-line{
     position:absolute;left:0;right:0;
     height:48px;
-    background-image:url('../assets/images/franja-tejida.png');
+    background-image:url('../assets/images/hero/franja-tejida.png');
     background-size:auto 48px;
     background-repeat:repeat-x;
     background-position:center;
@@ -392,7 +392,7 @@ body{
     display:flex;align-items:center;justify-content:center;
     position:relative;
 }
-/* Imagen PNG cubre todo el círculo */
+/* Imagen PNG cubre todo el c�rculo */
 .aps-node__circle .aps-node__icon{
     width:76px;height:76px;
     display:flex;align-items:center;justify-content:center;
@@ -413,7 +413,7 @@ body{
 .aps-node__circle:focus-visible{
     outline:3px solid #c0392b;outline-offset:4px;
 }
-/* Número de etapa pequeño sobre el nodo */
+/* N�mero de etapa peque�o sobre el nodo */
 .aps-node__num{
     position:absolute;
     top:-6px;right:-6px;
@@ -427,7 +427,7 @@ body{
     pointer-events:none;
 }
 
-/* Etiquetas inferiores (año + "Conocer más") */
+/* Etiquetas inferiores (a�o + "Conocer m�s") */
 .aps-labels-bottom{
     display:flex;
     padding-top:16px;
@@ -438,7 +438,7 @@ body{
     display:flex;flex-direction:column;
     align-items:center;text-align:center;
     gap:5px;
-    /* Animación de entrada desde abajo */
+    /* Animaci�n de entrada desde abajo */
     opacity:0;
     transform:translateY(16px);
     transition:opacity .5s var(--ease-out),transform .5s var(--ease-out);
@@ -453,7 +453,7 @@ body{
     display:inline-block;
     padding:3px 10px;border-radius:999px;
 }
-/* Colores alternados de años */
+/* Colores alternados de a�os */
 .aps-label-bottom:nth-child(5n+1) .aps-year-badge{color:#c0392b;background:rgba(192,57,43,.10)}
 .aps-label-bottom:nth-child(5n+2) .aps-year-badge{color:#e67e22;background:rgba(230,126,34,.10)}
 .aps-label-bottom:nth-child(5n+3) .aps-year-badge{color:#27ae60;background:rgba(39,174,96,.10)}
@@ -494,7 +494,7 @@ body{
 .aps-nav:hover{background:#fff;transform:translateY(-50%) scale(1.1)}
 .aps-nav:focus-visible{outline:2px solid #c0392b;outline-offset:2px}
 
-/* ─ Barra de Valores APS ─────────────────────────────────────────── */
+/* - Barra de Valores APS ------------------------------------------- */
 .aps-valores{
     display:flex;
     align-items:stretch;
@@ -581,7 +581,7 @@ body{
     font-size:1.1rem;opacity:.55;
 }
 
-/* ─ Modal APS (estilo tarjeta sepia / acuarela) ─────────────────── */
+/* - Modal APS (estilo tarjeta sepia / acuarela) ------------------- */
 .aps-modal{
     position:fixed;inset:0;z-index:1000;
     display:flex;align-items:center;justify-content:center;
@@ -613,7 +613,7 @@ body{
     font-family:var(--ff-sans);
 }
 
-/* Botón cerrar */
+/* Bot�n cerrar */
 .aps-modal__close{
     position:absolute;top:12px;right:14px;
     width:30px;height:30px;border-radius:50%;
@@ -627,7 +627,7 @@ body{
 .aps-modal__close:hover{background:#fff;transform:scale(1.1);color:#c0392b}
 .aps-modal__close:focus-visible{outline:2px solid #c0392b;outline-offset:2px}
 
-/* ── CABECERA ── */
+/* -- CABECERA -- */
 .aps-modal__header{
     display:flex;
     background:linear-gradient(135deg,#fef8ec 0%,#faefd5 60%,#f5e4c0 100%);
@@ -639,13 +639,13 @@ body{
 }
 /* Ornamento hojas en las esquinas */
 .aps-modal__header::before{
-    content:'🌿';
+    content:'??';
     position:absolute;bottom:8px;left:10px;
     font-size:1.4rem;opacity:.35;
     transform:scaleX(-1);
 }
 .aps-modal__header::after{
-    content:'🌿';
+    content:'??';
     position:absolute;bottom:8px;right:10px;
     font-size:1.4rem;opacity:.35;
 }
@@ -683,7 +683,7 @@ body{
     flex:1;min-width:120px;
 }
 
-/* Banner subtítulo — fondo rojo oscuro, texto cursivo blanco */
+/* Banner subt�tulo � fondo rojo oscuro, texto cursivo blanco */
 .aps-modal__subtitle-banner{
     background:#8b1a0e;
     border-radius:6px;
@@ -713,14 +713,14 @@ body{
     box-shadow:0 4px 14px rgba(0,0,0,.12);
 }
 
-/* ── CUERPO ── */
+/* -- CUERPO -- */
 .aps-modal__body{
     padding:18px 22px;
     display:flex;flex-direction:column;gap:14px;
     background:#fffdf5;
 }
 
-/* Sección "El gran momento del viaje" */
+/* Secci�n "El gran momento del viaje" */
 .aps-modal__moment{
     background:#fff;
     border:1.5px solid #e8d5a8;
@@ -746,7 +746,7 @@ body{
 }
 .aps-modal__desc-text:last-child{margin-bottom:0}
 
-/* "¿Qué cambia a partir de aquí?" */
+/* "�Qu� cambia a partir de aqu�?" */
 .aps-modal__changes{
     background:#fff;
     border:1.5px solid #e8d5a8;
@@ -800,7 +800,7 @@ body{
     color:#5a4030;line-height:1.3;
 }
 .aps-modal__concept.active .aps-modal__concept-name{color:#c0392b}
-/* Pista "ⓘ" en la esquina del icono */
+/* Pista "?" en la esquina del icono */
 .aps-modal__concept-hint{
     position:absolute;top:0;right:14px;
     font-size:.68rem;color:#c0392b;
@@ -812,7 +812,7 @@ body{
 .aps-modal__concept:hover .aps-modal__concept-hint,
 .aps-modal__concept.active .aps-modal__concept-hint{opacity:1;transform:scale(1.15)}
 
-/* Recuadro con la descripción del concepto seleccionado */
+/* Recuadro con la descripci�n del concepto seleccionado */
 .aps-modal__concept-info{
     flex-basis:100%;width:100%;
     margin-top:6px;
@@ -835,7 +835,7 @@ body{
     display:block;color:#3a2010;font-size:.85rem;margin-bottom:2px;
 }
 
-/* Sección de enlaces */
+/* Secci�n de enlaces */
 .aps-modal__links-section{
     background:#fff;
     border:1.5px solid #e8d5a8;
@@ -862,7 +862,7 @@ body{
 .aps-modal__link-pill[hidden]{display:none}
 .aps-modal__link-pill:focus-visible{outline:2px solid #c0392b;outline-offset:3px;border-radius:2px}
 
-/* ── PIE ── */
+/* -- PIE -- */
 .aps-modal__footer{
     padding:12px 22px 16px;
     border-top:1.5px solid #e8d5a8;
@@ -907,7 +907,7 @@ body{
     order:5;margin-top:2px;
 }
 
-/* Animación de deslizamiento al navegar entre etapas */
+/* Animaci�n de deslizamiento al navegar entre etapas */
 .aps-modal__panel.aps-anim-next{animation:apsSlideNext .4s var(--ease-out)}
 .aps-modal__panel.aps-anim-prev{animation:apsSlidePrev .4s var(--ease-out)}
 @keyframes apsSlideNext{
@@ -919,7 +919,7 @@ body{
     100%{opacity:1;transform:translateX(0)}
 }
 
-/* ── 10. RESPONSIVE ────────────────────────────────────────────── */
+/* -- 10. RESPONSIVE ---------------------------------------------- */
 @media(max-width:820px){
     .page-header__inner{flex-direction:column;align-items:flex-start;gap:12px}
 
@@ -938,13 +938,13 @@ body{
     .aps-node{width:120px}
 }
 
-/* ── 11. REDUCIR MOVIMIENTO ────────────────────────────────────── */
+/* -- 11. REDUCIR MOVIMIENTO -------------------------------------- */
 @media(prefers-reduced-motion:reduce){
     *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
     .bg-orb{animation:none!important}
 }
 
-/* ── 12. SCROLLBAR ─────────────────────────────────────────────── */
+/* -- 12. SCROLLBAR ----------------------------------------------- */
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{
