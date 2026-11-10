@@ -15,16 +15,16 @@ let apsModalIdx = -1;
 
 /* Íconos de la línea de tiempo — imágenes PNG por etapa */
 const APS_ICONS = {
-    1:  `<img src="assets/images/linea-etapa1.png"  alt="Etapa 1"  width="60" height="60">`,
-    2:  `<img src="assets/images/linea-etapa2.png"  alt="Etapa 2"  width="60" height="60">`,
-    3:  `<img src="assets/images/linea-etapa3.png"  alt="Etapa 3"  width="60" height="60">`,
-    4:  `<img src="assets/images/linea-etapa4.png"  alt="Etapa 4"  width="60" height="60">`,
-    5:  `<img src="assets/images/linea-etapa5.png"  alt="Etapa 5"  width="60" height="60">`,
-    6:  `<img src="assets/images/linea-etapa6.png"  alt="Etapa 6"  width="60" height="60">`,
-    7:  `<img src="assets/images/linea-etapa7.png"  alt="Etapa 7"  width="60" height="60">`,
-    8:  `<img src="assets/images/linea-etapa8.png"  alt="Etapa 8"  width="60" height="60">`,
-    9:  `<img src="assets/images/linea-etapa9.png"  alt="Etapa 9"  width="60" height="60">`,
-    10: `<img src="assets/images/linea-etapa10.png" alt="Etapa 10" width="60" height="60">`,
+    1:  `<img src="assets/images/linea-etapa1.png"  alt="Etapa 1"  width="76" height="76">`,
+    2:  `<img src="assets/images/linea-etapa2.png"  alt="Etapa 2"  width="76" height="76">`,
+    3:  `<img src="assets/images/linea-etapa3.png"  alt="Etapa 3"  width="76" height="76">`,
+    4:  `<img src="assets/images/linea-etapa4.png"  alt="Etapa 4"  width="76" height="76">`,
+    5:  `<img src="assets/images/linea-etapa5.png"  alt="Etapa 5"  width="76" height="76">`,
+    6:  `<img src="assets/images/linea-etapa6.png"  alt="Etapa 6"  width="76" height="76">`,
+    7:  `<img src="assets/images/linea-etapa7.png"  alt="Etapa 7"  width="76" height="76">`,
+    8:  `<img src="assets/images/linea-etapa8.png"  alt="Etapa 8"  width="76" height="76">`,
+    9:  `<img src="assets/images/linea-etapa9.png"  alt="Etapa 9"  width="76" height="76">`,
+    10: `<img src="assets/images/linea-etapa10.png" alt="Etapa 10" width="76" height="76">`,
 };
 
 function renderAps() {
@@ -63,7 +63,6 @@ function renderAps() {
                     aria-label="Etapa ${item.etapa}: ${item.title}. Haz clic para ver más."
                     data-idx="${i}">
                 <span class="aps-node__icon">${apsIcon}</span>
-                <span class="aps-node__num">${item.etapa}</span>
             </button>`;
         node.querySelector('.aps-node__circle').addEventListener('click', () => openApsModal(i));
         nodes.appendChild(node);
