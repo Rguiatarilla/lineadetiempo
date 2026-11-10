@@ -1,45 +1,22 @@
 /* ================================================================
-   LÍNEA DEL TIEMPO — ATENCIÓN PRIMARIA EN SALUD
+   Lï¿½NEA DEL TIEMPO ï¿½ ATENCIï¿½N PRIMARIA EN SALUD
    ================================================================ */
 
 /* -- 1. VARIABLES ----------------------------------------------- */
 :root {
     --aps:        #2e9e82;
     --aps-dark:   #1a6b57;
-    --aps-light:  #e8f7f3;
     --aps-pastel: #b8e8d8;
-    --aps-glow:   rgba(46,158,130,.22);
-
-    /* Acento secundario para los degradados del título */
-    --sc:         #3d7fb5;
     --sc-dark:    #245080;
-
-    --surface:    rgba(255,255,255,.97);
-    --surface-h:  #ffffff;
-    --tx-head:    #0c1f1a;
     --tx-body:    #213529;
     --tx-muted:   #4e6e5e;
-    --tx-sub:     #7a9b8a;
-
-    --sh-sm:   0 2px 8px  rgba(12,31,26,.07);
-    --sh-md:   0 6px 24px rgba(12,31,26,.10);
-    --sh-lg:   0 18px 52px rgba(12,31,26,.14);
-    --sh-card: 0 4px 22px rgba(12,31,26,.08);
-    --sh-hover:0 20px 56px rgba(12,31,26,.16);
-
-    --r-sm:  8px; --r-md: 14px; --r-lg: 22px; --r-pill: 999px;
+    --r-pill: 999px;
     --ff-sans:  'Inter', system-ui, sans-serif;
     --ff-serif: 'Playfair Display', Georgia, serif;
-
     --dur-fast:   .18s; --dur-base: .32s;
-    --dur-slow:   .60s; --dur-reveal: .70s;
     --ease-out:   cubic-bezier(.16,1,.3,1);
     --ease-spring:cubic-bezier(.34,1.46,.64,1);
     --ease-sm:    cubic-bezier(.4,0,.2,1);
-
-    --node-size: 52px;
-    --node-top:  20px;
-    --line-w:    3px;
 }
 
 /* -- 2. RESET ---------------------------------------------------- */
@@ -108,42 +85,10 @@ body{
 /* -- 5. PANELES -------------------------------------------------- */
 .tab-panel{display:none;animation:panelIn .4s var(--ease-out)}
 .tab-panel.active{display:block}
-@keyframes panelIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+to{opacity:1;transform:translateY(0)}}
 
-/* Hero de panel */
-.panel-hero{
-    text-align:center;
-    padding:52px 20px 40px;
-    max-width:1200px;margin:0 auto;
-}
-.panel-hero__eyebrow{
-    font-size:.72rem;font-weight:700;
-    letter-spacing:.09em;text-transform:uppercase;
-    margin-bottom:12px;
-}
-.panel-hero--aps .panel-hero__eyebrow{color:var(--aps)}
 
-.panel-hero__title{
-    font-family:var(--ff-serif);
-    font-size:clamp(2rem,4.5vw,3.2rem);
-    font-weight:800;line-height:1.15;
-    letter-spacing:-.02em;margin-bottom:14px;
-}
-.panel-hero--aps .panel-hero__title{
-    background:linear-gradient(140deg,var(--aps-dark) 0%,#1b3b61 100%);
-    background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
-}
-.panel-hero__title em{
-    font-style:italic;
-    background:linear-gradient(135deg,var(--aps) 0%,var(--sc) 100%);
-    background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
-}
-.panel-hero__sub{
-    font-size:1rem;color:var(--tx-muted);
-    max-width:520px;margin:0 auto;line-height:1.75;
-}
-
-/* -- 7. APS — INFOGRAFÍA "UN VIAJE POR LA HISTORIA" ------------- */
+/* -- 7. APS ï¿½ INFOGRAFï¿½A "UN VIAJE POR LA HISTORIA" ------------- */
 .tab-panel--aps{
     background-color:#f5f5f5;
     background-image:none;
@@ -159,7 +104,7 @@ body{
     display:flex;align-items:center;
 }
 
-/* La imagen ocupa el 100% del ancho — la altura se ajusta sola */
+/* La imagen ocupa el 100% del ancho ï¿½ la altura se ajusta sola */
 .aps-hero__img{
     display:block;
     width:100%;
@@ -286,7 +231,7 @@ body{
     gap:0;
 }
 
-/* Etiquetas superiores (etapa + título + desc) */
+/* Etiquetas superiores (etapa + tï¿½tulo + desc) */
 .aps-labels-top{
     display:flex;
     align-items:flex-end;
@@ -299,7 +244,7 @@ body{
     display:flex;flex-direction:column;
     align-items:center;text-align:center;
     gap:4px;
-    /* Animación de entrada desde arriba */
+    /* Animaciï¿½n de entrada desde arriba */
     opacity:0;
     transform:translateY(-16px);
     transition:opacity .5s var(--ease-out),transform .5s var(--ease-out);
@@ -327,13 +272,13 @@ body{
     line-height:1.3;display:block;
 }
 
-/* Track con línea y nodos */
+/* Track con lï¿½nea y nodos */
 .aps-track{
     position:relative;
     height:110px;
     display:flex;align-items:center;
 }
-/* Franja tejida — más delgada para que los círculos sobresalgan */
+/* Franja tejida ï¿½ mï¿½s delgada para que los cï¿½rculos sobresalgan */
 .aps-line{
     position:absolute;left:0;right:0;
     height:48px;
@@ -345,7 +290,6 @@ body{
     box-shadow:none;
     animation:lineGrowH 1.8s var(--ease-out) .2s both;
 }
-.aps-line::after{ display:none; }
 @keyframes lineGrowH{
     from{transform:scaleX(0);opacity:0}
     to  {transform:scaleX(1);opacity:1}
@@ -392,7 +336,7 @@ body{
     display:flex;align-items:center;justify-content:center;
     position:relative;
 }
-/* Imagen PNG cubre todo el círculo */
+/* Imagen PNG cubre todo el cï¿½rculo */
 .aps-node__circle .aps-node__icon{
     width:76px;height:76px;
     display:flex;align-items:center;justify-content:center;
@@ -413,21 +357,8 @@ body{
 .aps-node__circle:focus-visible{
     outline:3px solid #c0392b;outline-offset:4px;
 }
-/* Número de etapa pequeño sobre el nodo */
-.aps-node__num{
-    position:absolute;
-    top:-6px;right:-6px;
-    width:18px;height:18px;
-    border-radius:50%;
-    background:#c0392b;color:#fff;
-    font-size:.55rem;font-weight:900;
-    display:flex;align-items:center;justify-content:center;
-    border:2px solid #f5f0e8;
-    line-height:1;
-    pointer-events:none;
-}
 
-/* Etiquetas inferiores (año + "Conocer más") */
+/* Etiquetas inferiores (aï¿½o + "Conocer mï¿½s") */
 .aps-labels-bottom{
     display:flex;
     padding-top:16px;
@@ -438,7 +369,7 @@ body{
     display:flex;flex-direction:column;
     align-items:center;text-align:center;
     gap:5px;
-    /* Animación de entrada desde abajo */
+    /* Animaciï¿½n de entrada desde abajo */
     opacity:0;
     transform:translateY(16px);
     transition:opacity .5s var(--ease-out),transform .5s var(--ease-out);
@@ -453,7 +384,7 @@ body{
     display:inline-block;
     padding:3px 10px;border-radius:999px;
 }
-/* Colores alternados de años */
+/* Colores alternados de aï¿½os */
 .aps-label-bottom:nth-child(5n+1) .aps-year-badge{color:#c0392b;background:rgba(192,57,43,.10)}
 .aps-label-bottom:nth-child(5n+2) .aps-year-badge{color:#e67e22;background:rgba(230,126,34,.10)}
 .aps-label-bottom:nth-child(5n+3) .aps-year-badge{color:#27ae60;background:rgba(39,174,96,.10)}
@@ -613,7 +544,7 @@ body{
     font-family:var(--ff-sans);
 }
 
-/* Botón cerrar */
+/* Botï¿½n cerrar */
 .aps-modal__close{
     position:absolute;top:12px;right:14px;
     width:30px;height:30px;border-radius:50%;
@@ -683,7 +614,7 @@ body{
     flex:1;min-width:120px;
 }
 
-/* Banner subtítulo — fondo rojo oscuro, texto cursivo blanco */
+/* Banner subtï¿½tulo ï¿½ fondo rojo oscuro, texto cursivo blanco */
 .aps-modal__subtitle-banner{
     background:#8b1a0e;
     border-radius:6px;
@@ -720,7 +651,7 @@ body{
     background:#fffdf5;
 }
 
-/* Sección "El gran momento del viaje" */
+/* Secciï¿½n "El gran momento del viaje" */
 .aps-modal__moment{
     background:#fff;
     border:1.5px solid #e8d5a8;
@@ -746,7 +677,7 @@ body{
 }
 .aps-modal__desc-text:last-child{margin-bottom:0}
 
-/* "¿Qué cambia a partir de aquí?" */
+/* "ï¿½Quï¿½ cambia a partir de aquï¿½?" */
 .aps-modal__changes{
     background:#fff;
     border:1.5px solid #e8d5a8;
@@ -812,7 +743,7 @@ body{
 .aps-modal__concept:hover .aps-modal__concept-hint,
 .aps-modal__concept.active .aps-modal__concept-hint{opacity:1;transform:scale(1.15)}
 
-/* Recuadro con la descripción del concepto seleccionado */
+/* Recuadro con la descripciï¿½n del concepto seleccionado */
 .aps-modal__concept-info{
     flex-basis:100%;width:100%;
     margin-top:6px;
@@ -835,7 +766,7 @@ body{
     display:block;color:#3a2010;font-size:.85rem;margin-bottom:2px;
 }
 
-/* Sección de enlaces */
+/* Secciï¿½n de enlaces */
 .aps-modal__links-section{
     background:#fff;
     border:1.5px solid #e8d5a8;
@@ -907,7 +838,7 @@ body{
     order:5;margin-top:2px;
 }
 
-/* Animación de deslizamiento al navegar entre etapas */
+/* Animaciï¿½n de deslizamiento al navegar entre etapas */
 .aps-modal__panel.aps-anim-next{animation:apsSlideNext .4s var(--ease-out)}
 .aps-modal__panel.aps-anim-prev{animation:apsSlidePrev .4s var(--ease-out)}
 @keyframes apsSlideNext{
