@@ -15,16 +15,16 @@ let apsModalIdx = -1;
 
 /* Íconos de la línea de tiempo — imágenes PNG por etapa */
 const APS_ICONS = {
-    1:  `<img src="assets/images/linea-etapa1.png"  alt="Etapa 1"  width="40" height="40">`,
-    2:  `<img src="assets/images/linea-etapa2.png"  alt="Etapa 2"  width="40" height="40">`,
-    3:  `<img src="assets/images/linea-etapa3.png"  alt="Etapa 3"  width="40" height="40">`,
-    4:  `<img src="assets/images/linea-etapa4.png"  alt="Etapa 4"  width="40" height="40">`,
-    5:  `<img src="assets/images/linea-etapa5.png"  alt="Etapa 5"  width="40" height="40">`,
-    6:  `<img src="assets/images/linea-etapa6.png"  alt="Etapa 6"  width="40" height="40">`,
-    7:  `<img src="assets/images/linea-etapa7.png"  alt="Etapa 7"  width="40" height="40">`,
-    8:  `<img src="assets/images/linea-etapa8.png"  alt="Etapa 8"  width="40" height="40">`,
-    9:  `<img src="assets/images/linea-etapa9.png"  alt="Etapa 9"  width="40" height="40">`,
-    10: `<img src="assets/images/linea-etapa10.png" alt="Etapa 10" width="40" height="40">`,
+    1:  `<img src="assets/images/linea-etapa1.png"  alt="Etapa 1"  width="50" height="50">`,
+    2:  `<img src="assets/images/linea-etapa2.png"  alt="Etapa 2"  width="50" height="50">`,
+    3:  `<img src="assets/images/linea-etapa3.png"  alt="Etapa 3"  width="50" height="50">`,
+    4:  `<img src="assets/images/linea-etapa4.png"  alt="Etapa 4"  width="50" height="50">`,
+    5:  `<img src="assets/images/linea-etapa5.png"  alt="Etapa 5"  width="50" height="50">`,
+    6:  `<img src="assets/images/linea-etapa6.png"  alt="Etapa 6"  width="50" height="50">`,
+    7:  `<img src="assets/images/linea-etapa7.png"  alt="Etapa 7"  width="50" height="50">`,
+    8:  `<img src="assets/images/linea-etapa8.png"  alt="Etapa 8"  width="50" height="50">`,
+    9:  `<img src="assets/images/linea-etapa9.png"  alt="Etapa 9"  width="50" height="50">`,
+    10: `<img src="assets/images/linea-etapa10.png" alt="Etapa 10" width="50" height="50">`,
 };
 
 function renderAps() {
