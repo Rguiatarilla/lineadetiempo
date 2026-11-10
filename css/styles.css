@@ -145,10 +145,8 @@ body{
 
 /* ── 7. APS — INFOGRAFÍA "UN VIAJE POR LA HISTORIA" ───────────── */
 .tab-panel--aps{
-    background-color:#f5f0e8;
-    background-image:
-        radial-gradient(ellipse 80% 50% at 15% 0%,rgba(180,140,80,.08) 0%,transparent 55%),
-        radial-gradient(ellipse 60% 40% at 85% 100%,rgba(160,100,60,.06) 0%,transparent 55%);
+    background-color:#f5f5f5;
+    background-image:none;
     min-height:calc(100vh - 70px);
     font-family:var(--ff-sans);
 }
@@ -332,21 +330,20 @@ body{
 /* Track con línea y nodos */
 .aps-track{
     position:relative;
-    height:100px;
+    height:110px;
     display:flex;align-items:center;
 }
-/* Franja tejida como línea central */
+/* Franja tejida — más delgada para que los círculos sobresalgan */
 .aps-line{
     position:absolute;left:0;right:0;
-    height:80px;
+    height:48px;
     background-image:url('../assets/images/franja-tejida.png');
-    background-size:auto 80px;
+    background-size:auto 48px;
     background-repeat:repeat-x;
     background-position:center;
-    border-radius:0;
     z-index:0;
-    animation:lineGrowH 1.8s var(--ease-out) .2s both;
     box-shadow:none;
+    animation:lineGrowH 1.8s var(--ease-out) .2s both;
 }
 .aps-line::after{ display:none; }
 @keyframes lineGrowH{
